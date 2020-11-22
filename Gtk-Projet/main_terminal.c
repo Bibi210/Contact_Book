@@ -8,7 +8,6 @@ void show_num(GList *lst)
   GList *l;
   gint64 i;
   gchar* num_to_show;
-  // Parcours la liste mise en paramètre et affiche les contacts les uns après les autres
 
   for (l = lst, i = 1; l != NULL; l = l->next, i++)
   {
@@ -126,7 +125,7 @@ void voir_list_contact_detailler()
   for (GList *elem = L; elem != NULL; elem = elem->next)
   {
     //TODO A changer moche
-    lookup_Contact(g_strsplit(elem->data, espace, -1)[0]);
+    lookup_Contact(elem->data);
     Encours_affiche = current_contact();
     aff_contact(Encours_affiche);
   }
