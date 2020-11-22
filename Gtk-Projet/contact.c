@@ -1,27 +1,45 @@
 #include "contact.h"
 
-void global_list_init()
+void global_list_init(gchar *filename)
 {
     //TODO Prendre les contacts depuis un fichier
     _Contact_list = g_hash_table_new(g_str_hash, g_str_equal);
+    (void)filename;
 }
 
 void init_contact(GList *contact_data)
 {
-    Contact_t *Untype = NULL;
+    Contact_t *Untype = g_try_malloc (sizeof(Contact_t));
     gint Nb_num = 0;
+    gchar *Nb_num_char;
     //TODO Modifier
+
+    Untype->Name = g_try_malloc (sizeof(gchar));
+    Untype->Prenom = g_try_malloc (sizeof(gchar));
+    Untype->Email = g_try_malloc (sizeof(gchar));
+    Untype->Anniv = g_try_malloc (sizeof(gchar));
+    Untype->Adresse = g_try_malloc (sizeof(gchar));
+    Untype->Notes = g_try_malloc (sizeof(gchar));
+    Untype->Numero = g_try_malloc (sizeof(GList));
+
     Untype->Name = g_strdup(g_list_first(contact_data)->data);
+    assert(Untype->Name);
     contact_data = g_list_remove(contact_data, Untype->Name);
 
     Untype->Prenom = g_strdup(g_list_first(contact_data)->data);
+    assert(Untype->Prenom);
     contact_data = g_list_remove(contact_data, Untype->Prenom);
 
     Untype->Email = g_strdup(g_list_first(contact_data)->data);
+    assert(Untype->Email);
     contact_data = g_list_remove(contact_data, Untype->Email);
 
-    Nb_num = g_strdup(g_list_first(contact_data)->data);
-    contact_data = g_list_remove(contact_data, Nb_num);
+    Nb_num_char = g_strdup(g_list_first(contact_data)->data);
+    assert(Nb_num_char);
+
+    Nb_num = g_ascii_strtoll(Nb_num_char, NULL, 10);
+
+    contact_data = g_list_remove(contact_data, Nb_num_char);
 
     for (gint i = 0; i < Nb_num; i++)
     {
@@ -30,10 +48,17 @@ void init_contact(GList *contact_data)
     }
 
     Untype->Anniv = g_strdup(g_list_first(contact_data)->data);
+    assert(Untype->Anniv);
     contact_data = g_list_remove(contact_data, Untype->Anniv);
 
     Untype->Adresse = g_strdup(g_list_first(contact_data)->data);
+    assert(Untype->Adresse);
     contact_data = g_list_remove(contact_data, Untype->Adresse);
+
+    Untype->Notes = g_strdup(g_list_first(contact_data)->data);
+    assert(Untype->Notes);
+    contact_data = g_list_remove(contact_data, Untype->Notes);
+    
 
     g_hash_table_insert(_Contact_list, Untype->Name, Untype);
     _Current_Contact = Untype;
@@ -41,23 +66,27 @@ void init_contact(GList *contact_data)
 
 void modify_contact(GList *contact_data)
 {
-    gchar* Nb_num_char;
+    gchar *Nb_num_char;
     gint Nb_num = 0;
     //TODO Modifier
     _Current_Contact->Name = g_strdup(g_list_first(contact_data)->data);
+    assert(_Current_Contact->Name);
     contact_data = g_list_remove(contact_data, _Current_Contact->Name);
 
     _Current_Contact->Prenom = g_strdup(g_list_first(contact_data)->data);
+    assert(_Current_Contact->Prenom);
     contact_data = g_list_remove(contact_data, _Current_Contact->Prenom);
 
     _Current_Contact->Email = g_strdup(g_list_first(contact_data)->data);
+    assert(_Current_Contact->Email);
     contact_data = g_list_remove(contact_data, _Current_Contact->Email);
 
     Nb_num_char = g_strdup(g_list_first(contact_data)->data);
+    assert(Nb_num_char);
 
-    Nb_num = 
+    Nb_num = g_ascii_strtoll(Nb_num_char, NULL, 10);
 
-    contact_data = g_list_remove(contact_data, Nb_num);
+    contact_data = g_list_remove(contact_data, Nb_num_char);
 
     for (gint i = 0; i < Nb_num; i++)
     {
@@ -66,10 +95,16 @@ void modify_contact(GList *contact_data)
     }
 
     _Current_Contact->Anniv = g_strdup(g_list_first(contact_data)->data);
+    assert(_Current_Contact->Anniv);
     contact_data = g_list_remove(contact_data, _Current_Contact->Anniv);
 
     _Current_Contact->Adresse = g_strdup(g_list_first(contact_data)->data);
+    assert(_Current_Contact->Adresse);
     contact_data = g_list_remove(contact_data, _Current_Contact->Adresse);
+
+    _Current_Contact->Notes = g_strdup(g_list_first(contact_data)->data);
+    assert(_Current_Contact->Notes);
+    contact_data = g_list_remove(contact_data, _Current_Contact->Notes);
 
     g_hash_table_insert(_Contact_list, _Current_Contact->Name, _Current_Contact);
 }
@@ -87,7 +122,8 @@ void del_contact()
     g_free(_Current_Contact->Email);
     g_free(_Current_Contact->Adresse);
     g_free(_Current_Contact->Anniv);
-    g_slist_free(_Current_Contact->Numero);
+    g_free(_Current_Contact->Notes);
+    g_list_free(_Current_Contact->Numero);
     _Current_Contact = NULL;
 }
 
