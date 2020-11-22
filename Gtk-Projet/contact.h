@@ -13,9 +13,8 @@ typedef struct Contact
     GList *Numero;
 } Contact_t;
 
-
-GHashTable *_Contact_list = NULL;
-Contact_t *_Current_Contact = NULL;
+static GHashTable *_Contact_list = NULL;
+static Contact_t *_Current_Contact = NULL;
 
 void global_list_init(gchar *filename);
 void init_contact(GList* contact_data);
@@ -23,3 +22,4 @@ void modify_contact(GList* contact_data);
 void lookup_Contact(gchar *name);
 void del_contact(void);
 GList *list_contact_sorted();
+Contact_t* current_contact();
