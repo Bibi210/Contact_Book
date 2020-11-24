@@ -1,2 +1,4 @@
 *.o
 /Gtk-Projet/contact
+/Gtk-Projet/mysqltest
+/Gtk-Projet/main_terminal
