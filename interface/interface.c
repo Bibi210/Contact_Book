@@ -11,7 +11,7 @@ enum
 };
 enum
 {
-    
+
     NAME_COLUMN,
     LAST_NAME_COLUMN,
     CP_COLUMN,
@@ -21,16 +21,22 @@ enum
 
 typedef struct Contact_struct
 {
-    GString *Nom;
-    GString *Prenom;
-    guint *cp;
-    GArray *number;
+    gchar *Nom;
+    gchar *Prenom;
+    gchar *cp;
+    gchar *number;
 } t_contact;
 
-int len(GArray *tab)
+t_contact Newcontact(gchar *Prenom, gchar *Nom, gchar *cp, gchar *number)
 {
-    sizeof(tab) / sizeof(tab[0]);
+    t_contact contact;
+    contact.Prenom = Prenom;
+    contact.Nom = Nom;
+    contact.cp = cp;
+    contact.number = number;
+    return contact;
 }
+
 void ShowModal()
 {
     GtkBuilder *builder = NULL;
@@ -68,7 +74,7 @@ gint main(gint argc, gchar **argv)
     GError *error = NULL;
     gchar *filename = NULL;
     gtk_init(&argc, &argv);
-    GArray *user_array; 
+    t_contact daouda = Newcontact("daouda", "kanoute", "00000", "0617171717");
     // fichier Glade
     builder = gtk_builder_new();
     filename = g_build_filename("./projetGTK.glade", NULL);
@@ -86,21 +92,21 @@ gint main(gint argc, gchar **argv)
     scrollView = GTK_WIDGET(gtk_builder_get_object(builder, "contact_list"));
 
     /* listStore */
-    listStore = gtk_list_store_new(N_COLUMN, G_TYPE_STRING, G_TYPE_STRING,G_TYPE_STRING,G_TYPE_STRING);
+    listStore = gtk_list_store_new(N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     txt = g_malloc(12);
     for (i = 0; i < 30; ++i)
     {
         GtkTreeIter pIter;
-
-        sprintf(txt, "Ligne %d\0", i);
 
         /* Creation de la nouvelle ligne */
         gtk_list_store_append(listStore, &pIter);
 
         /* Mise a jour des donnees */
         gtk_list_store_set(listStore, &pIter,
-                           NAME_COLUMN, txt,
-                           LAST_NAME_COLUMN, "TRUE",
+                           NAME_COLUMN, daouda.Prenom,
+                           LAST_NAME_COLUMN, daouda.Nom,
+                           CP_COLUMN, daouda.cp,
+                           NUMBER_COLUMN, daouda.number,
                            -1);
     }
     g_free(txt);
@@ -108,34 +114,29 @@ gint main(gint argc, gchar **argv)
     listView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(listStore));
     cellRenderer = gtk_cell_renderer_text_new();
     column = gtk_tree_view_column_new_with_attributes("prenom",
-                                                       cellRenderer,
-                                                       "text", NAME_COLUMN,
-                                                       NULL);
+                                                      cellRenderer,
+                                                      "text", NAME_COLUMN,
+                                                      NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(listView), column);
     column = gtk_tree_view_column_new_with_attributes("nom",
-                                                       cellRenderer,
-                                                       "text", LAST_NAME_COLUMN,
-                                                       NULL);
+                                                      cellRenderer,
+                                                      "text", LAST_NAME_COLUMN,
+                                                      NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(listView), column);
 
     column = gtk_tree_view_column_new_with_attributes("CP",
-                                                       cellRenderer,
-                                                       "text", CP_COLUMN,
-                                                       NULL);
+                                                      cellRenderer,
+                                                      "text", CP_COLUMN,
+                                                      NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(listView), column);
-
 
     column = gtk_tree_view_column_new_with_attributes("Number1",
-                                                       cellRenderer,
-                                                       "text", NUMBER_COLUMN,
-                                                       NULL);
+                                                      cellRenderer,
+                                                      "text", NUMBER_COLUMN,
+                                                      NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(listView), column);
 
-
-
-
-
-// Gestion auto du scroll
+    // Gestion auto du scroll
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollView),
                                    GTK_POLICY_AUTOMATIC,
                                    GTK_POLICY_AUTOMATIC);
