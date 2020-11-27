@@ -55,7 +55,6 @@
             <property name="name">New_user_name</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="text" translatable="yes">Nom</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -68,7 +67,6 @@
             <property name="name">New_user_last_name</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="text" translatable="yes">Prenom</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -81,7 +79,6 @@
             <property name="name">New_number</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="text" translatable="yes">Numero</property>
           </object>
           <packing>
             <property name="expand">False</property>
