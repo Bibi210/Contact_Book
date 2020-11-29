@@ -22,7 +22,7 @@ GtkWidget *listView;
 
 typedef struct Contact_struct
 {
-    
+
     GtkWidget *Nom;
     GtkWidget *Prenom;
     GtkWidget *cp;
