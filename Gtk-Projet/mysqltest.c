@@ -52,28 +52,13 @@ void data_base_modify_contact(GList *contact_data)
     data_base_add_contact(contact_data);
 }
 
-int print_data_callback(void *useless, gint argc, gchar **argv, gchar **azColName)
-{
-
-    for (gint i = 0; i < argc; i++)
-    {
-        g_print("%s = %s\n", azColName[i], argv[i] ? argv[i] : "....");
-    }
-    (void)useless;
-    return 0;
-}
-void data_base_print()
-{
-    sqlite3_exec(_db, "SELECT * FROM contact_list ORDER BY nom", print_data_callback, 0, NULL);
-}
 
 GList *data_base_lookup(gchar *recherche)
 {
-    //TODO ajouter d'autre option de recherche
     GList *Contacts = NULL;
     GList *Untype = NULL;
     sqlite3_stmt *commande;
-    sqlite3_prepare_v2(_db, "SELECT * FROM contact_list WHERE prenom = ? OR nom = ? OR num1 = ? OR num2 = ? OR num3 = ?", -1, &commande, NULL);
+    sqlite3_prepare_v2(_db, "SELECT * FROM contact_list WHERE prenom = ? OR nom = ? OR num1 = ? OR num2 = ? OR num3 = ? OR id = ?", -1, &commande, NULL);
     for (gint i = 0; i <= 5; i++)
     {
         sqlite3_bind_text(commande, i, recherche, -1, NULL);
@@ -101,6 +86,21 @@ GList *data_base_lookup(gchar *recherche)
     //     g_print("\n");
     // }
     return Contacts;
+}
+
+int print_data_callback(void *useless, gint argc, gchar **argv, gchar **azColName)
+{
+
+    for (gint i = 0; i < argc; i++)
+    {
+        g_print("%s = %s\n", azColName[i], argv[i] ? argv[i] : "....");
+    }
+    (void)useless;
+    return 0;
+}
+void data_base_print()
+{
+    sqlite3_exec(_db, "SELECT * FROM contact_list ORDER BY nom", print_data_callback, 0, NULL);
 }
 
 int main()
