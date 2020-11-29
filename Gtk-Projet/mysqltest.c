@@ -1,6 +1,6 @@
 #include <sqlite3.h>
 #include <gtk/gtk.h>
-#define CONTACT_SIZE ((guint8)9)
+#define CONTACT_SIZE ((guint8)10)
 
 sqlite3 *_db;
 
@@ -50,7 +50,7 @@ void data_base_modify_contact(GList *contact_data){
     data_base_add_contact(contact_data);
 }
 
-int print_data_callback(void *useless, int argc, char **argv,char **azColName){
+int print_data_callback(void *useless, gint argc, gchar **argv,gchar **azColName){
     
     for (gint i=0;i < argc;i++){
         g_print("%s = %s\n",azColName[i],argv[i]? argv[i]:"...."); 
@@ -62,10 +62,21 @@ void data_base_print(){
     sqlite3_exec(_db,"SELECT * FROM contact_list ORDER BY nom",print_data_callback,0,NULL);
 }
 
+
+
 void data_base_lookup(gchar* recherche){
-    gchar* com = "SELECT * FROM contact_list WHERE nom ='";
-    gchar* full_com = g_strjoin("",com,recherche,"';",NULL);
-    sqlite3_exec(_db, full_com,print_data_callback,0,NULL);
+    //TODO ajouter d'autre option de recherche
+   sqlite3_stmt *commande;
+   sqlite3_prepare_v2(_db,"SELECT * FROM contact_list WHERE prenom = ? OR nom = ? OR num1 = ? OR num2 = ? OR num3 = ?",-1,&commande,NULL);
+   for (gint i = 0; i <= 5; i++){
+   sqlite3_bind_text(commande,i,recherche,-1,NULL);
+   }
+   while (sqlite3_step(commande) == SQLITE_ROW) 
+   {
+       g_print("%s\n",sqlite3_column_text(commande,1));
+   }
+   
+   
 }
 
 int main()
@@ -87,15 +98,17 @@ int main()
     GList *bibi = NULL;
     bibi = g_list_append(bibi, "6");
     bibi = g_list_append(bibi, "Zidane");
-    bibi = g_list_append(bibi, "Dibassi");
+    bibi = g_list_append(bibi, "Brahima");
     data_base_add_contact(bibi);
     data_base_add_contact(test_contact);
     
-    data_base_lookup("Dibassi");
+    data_base_lookup("0615261588");
+
 
     //! gcc -fanalyzer -Wall -Wextra mysqltest.c -o  mysqltest -g `pkg-config --cflags --libs gtk+-3.0` -lsqlite3  && mysqltest
     //* qlite3_bind_text(phrase en preparation ,Position du ?,Value a bind,Taille '-1',Callback);
     //* select * from contact_list WHERE id = '2'
     data_base_del_contact("1");
+    data_base_del_contact("6");
     sqlite3_close(_db);
 }
