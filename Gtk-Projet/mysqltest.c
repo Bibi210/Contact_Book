@@ -37,46 +37,70 @@ void data_base_add_contact(GList *un_type)
     sqlite3_finalize(commande);
 }
 
-void data_base_del_contact(gchar* id){
+void data_base_del_contact(gchar *id)
+{
     sqlite3_stmt *commande;
     sqlite3_prepare_v2(_db, "DELETE FROM contact_list WHERE id = ?;", -1, &commande, NULL);
-    sqlite3_bind_text(commande,1,id,-1,NULL);
+    sqlite3_bind_text(commande, 1, id, -1, NULL);
     sqlite3_step(commande);
     sqlite3_finalize(commande);
 }
 
-void data_base_modify_contact(GList *contact_data){
+void data_base_modify_contact(GList *contact_data)
+{
     data_base_del_contact(contact_data->data);
     data_base_add_contact(contact_data);
 }
 
-int print_data_callback(void *useless, gint argc, gchar **argv,gchar **azColName){
-    
-    for (gint i=0;i < argc;i++){
-        g_print("%s = %s\n",azColName[i],argv[i]? argv[i]:"...."); 
+int print_data_callback(void *useless, gint argc, gchar **argv, gchar **azColName)
+{
+
+    for (gint i = 0; i < argc; i++)
+    {
+        g_print("%s = %s\n", azColName[i], argv[i] ? argv[i] : "....");
     }
-    (void) useless;
+    (void)useless;
     return 0;
 }
-void data_base_print(){
-    sqlite3_exec(_db,"SELECT * FROM contact_list ORDER BY nom",print_data_callback,0,NULL);
+void data_base_print()
+{
+    sqlite3_exec(_db, "SELECT * FROM contact_list ORDER BY nom", print_data_callback, 0, NULL);
 }
 
-
-
-void data_base_lookup(gchar* recherche){
+GList *data_base_lookup(gchar *recherche)
+{
     //TODO ajouter d'autre option de recherche
-   sqlite3_stmt *commande;
-   sqlite3_prepare_v2(_db,"SELECT * FROM contact_list WHERE prenom = ? OR nom = ? OR num1 = ? OR num2 = ? OR num3 = ?",-1,&commande,NULL);
-   for (gint i = 0; i <= 5; i++){
-   sqlite3_bind_text(commande,i,recherche,-1,NULL);
-   }
-   while (sqlite3_step(commande) == SQLITE_ROW) 
-   {
-       g_print("%s\n",sqlite3_column_text(commande,1));
-   }
-   
-   
+    GList *Contacts = NULL;
+    GList *Untype = NULL;
+    sqlite3_stmt *commande;
+    sqlite3_prepare_v2(_db, "SELECT * FROM contact_list WHERE prenom = ? OR nom = ? OR num1 = ? OR num2 = ? OR num3 = ?", -1, &commande, NULL);
+    for (gint i = 0; i <= 5; i++)
+    {
+        sqlite3_bind_text(commande, i, recherche, -1, NULL);
+    }
+    while (sqlite3_step(commande) == SQLITE_ROW)
+    {
+        Untype = NULL;
+        for (gint t = 0; t < CONTACT_SIZE; t++)
+        {
+            gchar *bref = g_strdup((gchar *)sqlite3_column_text(commande, t));
+            //! Patch bancal
+            if (t != 3)
+            {
+                Untype = g_list_append(Untype, bref);
+            }
+        }
+        Contacts = g_list_append(Contacts, Untype);
+    }
+    // for (GList *encours = Contacts; encours != NULL; encours = encours->next)
+    // {
+    //     for (GList *To_print = encours->data; To_print != NULL; To_print = To_print->next)
+    //     {
+    //         g_print("%s\n", (gchar *)To_print->data);
+    //     }
+    //     g_print("\n");
+    // }
+    return Contacts;
 }
 
 int main()
@@ -99,15 +123,16 @@ int main()
     bibi = g_list_append(bibi, "6");
     bibi = g_list_append(bibi, "Zidane");
     bibi = g_list_append(bibi, "Brahima");
+    bibi = g_list_append(bibi, "bruh@gmail.com");
     data_base_add_contact(bibi);
     data_base_add_contact(test_contact);
-    
-    data_base_lookup("0615261588");
 
+    data_base_lookup("Brahima");
 
     //! gcc -fanalyzer -Wall -Wextra mysqltest.c -o  mysqltest -g `pkg-config --cflags --libs gtk+-3.0` -lsqlite3  && mysqltest
     //* qlite3_bind_text(phrase en preparation ,Position du ?,Value a bind,Taille '-1',Callback);
     //* select * from contact_list WHERE id = '2'
+    //* sudo apt-get install -y libsqlite3-dev
     data_base_del_contact("1");
     data_base_del_contact("6");
     sqlite3_close(_db);
