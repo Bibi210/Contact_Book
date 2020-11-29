@@ -22,6 +22,7 @@ GtkWidget *listView;
 
 typedef struct Contact_struct
 {
+    
     GtkWidget *Nom;
     GtkWidget *Prenom;
     GtkWidget *cp;
@@ -91,12 +92,13 @@ void add_to_list(GtkWidget *widget, gpointer user_data)
     gchar *nom = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->Nom)));
     gchar *cp = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->cp)));
     gchar *number = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->number)));
-
+    
     gtk_list_store_append(store, &iter);
     gtk_list_store_set(store, &iter,
                        NAME_COLUMN, prenom,
                        LAST_NAME_COLUMN, nom,
                        NUMBER_COLUMN, number,
+                       CP_COLUMN, cp,
                        -1);
 }
 
@@ -111,6 +113,7 @@ void ShowModal()
     GtkWidget *Add_user;
     GtkWidget *New_user_name;
     GtkWidget *New_user_last_name;
+    GtkWidget *New_user_cp;
     GtkWidget *New_user_number;
     t_contact *contact = g_try_malloc(sizeof(t_contact));
 
@@ -118,14 +121,15 @@ void ShowModal()
     builder = gtk_builder_new_from_file("./projetGTK.glade");
     New_user_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_name"));
     New_user_last_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_last_name"));
+    New_user_cp = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_cp"));
     New_user_number = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number"));
     GtkWidget *Dialog_box = GTK_WIDGET(gtk_builder_get_object(builder, "Dialog_box"));
     Add_user = GTK_WIDGET(gtk_builder_get_object(builder, "Add_user"));
 
     contact->Prenom = New_user_name;
     contact->Nom = New_user_last_name;
+    contact->cp = New_user_cp;
     contact->number = New_user_number;
-    contact->cp = New_user_number;
 
     g_signal_connect(Add_user, "clicked", G_CALLBACK(add_to_list), contact);
     gtk_dialog_run(GTK_DIALOG(Dialog_box));
