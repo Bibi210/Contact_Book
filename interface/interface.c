@@ -26,7 +26,12 @@ typedef struct Contact_struct
     GtkWidget *Nom;
     GtkWidget *Prenom;
     GtkWidget *cp;
-    GtkWidget *number;
+    GtkWidget *email;
+    GtkWidget *adress;
+    GtkWidget *number1;
+    GtkWidget *number2;
+    GtkWidget *number3;
+    GtkWidget *note;
 } t_contact;
 
 // t_contact Newcontact(gchar *Prenom, gchar *Nom, gchar *cp, gchar *number)
@@ -91,13 +96,13 @@ void add_to_list(GtkWidget *widget, gpointer user_data)
     gchar *prenom = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->Prenom)));
     gchar *nom = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->Nom)));
     gchar *cp = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->cp)));
-    gchar *number = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->number)));
+    gchar *number1 = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->number1)));
     
     gtk_list_store_append(store, &iter);
     gtk_list_store_set(store, &iter,
                        NAME_COLUMN, prenom,
                        LAST_NAME_COLUMN, nom,
-                       NUMBER_COLUMN, number,
+                       NUMBER_COLUMN, number1,
                        CP_COLUMN, cp,
                        -1);
 }
@@ -110,26 +115,28 @@ void GetInformation(t_contact contact)
 void ShowModal()
 {
     GtkBuilder *builder = NULL;
-    GtkWidget *Add_user;
-    GtkWidget *New_user_name;
-    GtkWidget *New_user_last_name;
-    GtkWidget *New_user_cp;
-    GtkWidget *New_user_number;
     t_contact *contact = g_try_malloc(sizeof(t_contact));
+  
 
     //  const gchar *number;
     builder = gtk_builder_new_from_file("./projetGTK.glade");
-    New_user_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_name"));
-    New_user_last_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_last_name"));
-    New_user_cp = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_cp"));
-    New_user_number = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number"));
+     GtkWidget *Add_user = GTK_WIDGET(gtk_builder_get_object(builder, "Add_user"));
     GtkWidget *Dialog_box = GTK_WIDGET(gtk_builder_get_object(builder, "Dialog_box"));
-    Add_user = GTK_WIDGET(gtk_builder_get_object(builder, "Add_user"));
+     GtkWidget *New_user_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_name"));
+     GtkWidget *New_user_last_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_last_name"));
+     GtkWidget *New_user_adress = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_adress"));
+     GtkWidget *New_user_cp = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_cp"));
+     GtkWidget *New_user_number1 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number1"));
+     GtkWidget *New_user_number2 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number2"));
+     GtkWidget *New_user_number3 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number3"));
 
     contact->Prenom = New_user_name;
     contact->Nom = New_user_last_name;
     contact->cp = New_user_cp;
-    contact->number = New_user_number;
+    contact->adress = New_user_adress;
+    contact->number1 = New_user_number1;
+    contact->number2 = New_user_number2;
+    contact->number3 = New_user_number3;
 
     g_signal_connect(Add_user, "clicked", G_CALLBACK(add_to_list), contact);
     gtk_dialog_run(GTK_DIALOG(Dialog_box));
