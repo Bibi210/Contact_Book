@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gtk/gtk.h>
+#include "data_base.h"
 
 enum
 {
@@ -43,6 +44,7 @@ typedef struct Contact_struct
 //     contact.number = number;
 //     return contact;
 // }
+
 
 void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
 {
@@ -90,20 +92,19 @@ void add_to_list(GtkWidget *widget, gpointer user_data)
 
     GtkListStore *store;
     GtkTreeIter iter;
-    t_contact *d = user_data;
+    GList *contact = user_data;
+    gchar* nom = contact->data;
+    contact = contact->next;
+    gchar* prenom = contact->data;
+    
+    data_base_add_contact(contact);
 
     store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(listView)));
-    gchar *prenom = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->Prenom)));
-    gchar *nom = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->Nom)));
-    gchar *cp = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->cp)));
-    gchar *number1 = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->number1)));
     
     gtk_list_store_append(store, &iter);
     gtk_list_store_set(store, &iter,
                        NAME_COLUMN, prenom,
                        LAST_NAME_COLUMN, nom,
-                       NUMBER_COLUMN, number1,
-                       CP_COLUMN, cp,
                        -1);
 }
 
@@ -115,28 +116,36 @@ void GetInformation(t_contact contact)
 void ShowModal()
 {
     GtkBuilder *builder = NULL;
-    t_contact *contact = g_try_malloc(sizeof(t_contact));
-  
+    GList *contact = NULL;
 
     //  const gchar *number;
     builder = gtk_builder_new_from_file("./projetGTK.glade");
-     GtkWidget *Add_user = GTK_WIDGET(gtk_builder_get_object(builder, "Add_user"));
+    GtkWidget *Add_user = GTK_WIDGET(gtk_builder_get_object(builder, "Add_user"));
     GtkWidget *Dialog_box = GTK_WIDGET(gtk_builder_get_object(builder, "Dialog_box"));
-     GtkWidget *New_user_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_name"));
-     GtkWidget *New_user_last_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_last_name"));
-     GtkWidget *New_user_adress = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_adress"));
-     GtkWidget *New_user_cp = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_cp"));
-     GtkWidget *New_user_number1 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number1"));
-     GtkWidget *New_user_number2 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number2"));
-     GtkWidget *New_user_number3 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number3"));
+    GtkWidget *New_user_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_name"));
+    GtkWidget *New_user_last_name = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_last_name"));
+    GtkWidget *New_user_adress = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_adress"));
+    GtkWidget *New_user_cp = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_cp"));
+    GtkWidget *New_user_number1 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number1"));
+    GtkWidget *New_user_number2 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number2"));
+    GtkWidget *New_user_number3 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number3"));
+    GtkWidget *New_user_email = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_email"));
+    GtkWidget *New_user_note = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_note"));
 
-    contact->Prenom = New_user_name;
-    contact->Nom = New_user_last_name;
-    contact->cp = New_user_cp;
-    contact->adress = New_user_adress;
-    contact->number1 = New_user_number1;
-    contact->number2 = New_user_number2;
-    contact->number3 = New_user_number3;
+    contact = g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_name))));
+    contact= g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_last_name))));
+    contact = g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_email))));
+    contact = g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_adress))));
+    contact = g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_cp))));
+
+    //TODO contact = g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_type))));
+
+    contact = g_list_append(contact,NULL);
+    contact = g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_number1))));
+    contact = g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_number2))));
+    contact = g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_number3))));
+    contact = g_list_append(contact,g_strdup(gtk_entry_get_text(GTK_ENTRY(New_user_note))));
+   
 
     g_signal_connect(Add_user, "clicked", G_CALLBACK(add_to_list), contact);
     gtk_dialog_run(GTK_DIALOG(Dialog_box));
@@ -163,11 +172,16 @@ void remove_item(GtkWidget *widget, gpointer selection)
     }
 }
 
+void prog_exit(void){
+    data_base_close();
+    gtk_main_quit();
+}
+
 gint main(gint argc, gchar **argv)
 {
+    data_base_init();
     GtkBuilder *builder = NULL;
     GtkListStore *listStore;
-    gchar *txt;
     GtkWidget *window;
     GtkWidget *contact_list;
     GtkWidget *contact_new;
@@ -197,12 +211,13 @@ gint main(gint argc, gchar **argv)
     initList(listView, listStore, builder);
     selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(listView));
 
-    g_signal_connect(G_OBJECT(window), "destroy", (GCallback)gtk_main_quit, NULL);
+    g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(prog_exit), NULL);
     g_signal_connect(contact_new, "clicked", G_CALLBACK(ShowModal), NULL);
     g_signal_connect(G_OBJECT(contact_remove), "clicked", G_CALLBACK(remove_item), selection);
 
     gtk_widget_show_all(window);
-
+    //* gcc -fanalyzer -Wall -Wextra data_base.c interface.c -I. -o  contact_book -g `pkg-config --cflags --libs gtk+-3.0` -lsqlite3  && contact_book
+    //* sudo apt-get install -y libsqlite3-dev 
     gtk_main();
 
     return 0;

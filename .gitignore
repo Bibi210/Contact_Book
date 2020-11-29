@@ -1,6 +1,6 @@
 *.o
-/Gtk-Projet/contact
+*.so
+/Gtk-Projet/contact_book
 /Gtk-Projet/mysqltest
-/Gtk-Projet/main_terminal
-/Gtk-Projet/contacts_base.db
 /Gtk-Projet/data_base
+/Gtk-Projet/contacts_base.db

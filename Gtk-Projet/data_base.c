@@ -1,5 +1,5 @@
 #include "data_base.h"
-
+static sqlite3 *_db;
 extern void data_base_init()
 {
     gchar *errorsql = "Erreur sur la base de données";
@@ -82,7 +82,7 @@ extern GList *data_base_lookup(gchar *recherche)
     return Contacts;
 }
 
-static int print_data_callback(void *useless, gint argc, gchar **argv, gchar **azColName)
+extern int print_data_callback(void *useless, gint argc, gchar **argv, gchar **azColName)
 {
 
     for (gint i = 0; i < argc; i++)
@@ -97,9 +97,6 @@ extern void data_base_print()
     sqlite3_exec(_db, "SELECT * FROM contact_list ORDER BY nom", print_data_callback, 0, NULL);
 }
 
-int main()
-{
-    data_base_init();
 
     // GList *test_contact = NULL;
     // test_contact = g_list_append(test_contact, "1");
@@ -131,5 +128,3 @@ int main()
     // data_base_del_contact("1");
     // data_base_del_contact("6");
 
-    data_base_close();
-}
