@@ -1,6 +1,26 @@
 #include "data_base.h"
 static sqlite3 *_db;
 
+static gint _id = 0;
+//TODO Gestion de l'id
+void init_id(){
+    sqlite3_stmt *commande;
+    sqlite3 *db;
+    sqlite3_open("contacts_base.db",&db);
+    sqlite3_prepare_v2(db,"SELECT * FROM contact_list",-1,&commande, NULL);
+
+    while (SQLITE_ROW == sqlite3_step(commande)){
+        _id++;
+    }
+    sqlite3_finalize(commande);
+    g_print("_id = %d\n", _id);
+    sqlite3_close(db);
+}
+
+void get_id(){
+    return _id;
+}
+
 extern void data_base_init()
 {
     gchar *errorsql = "Erreur sur la base de données";
