@@ -412,12 +412,12 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkBox">
+              <object class="GtkBox" id="Gtk_boxxx">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkGrid">
+                  <object class="GtkGrid" id="Gtk_boxxxxx">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="row_spacing">10</property>

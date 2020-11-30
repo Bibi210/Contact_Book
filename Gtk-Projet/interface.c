@@ -35,15 +35,6 @@ typedef struct Contact_struct
     GtkWidget *note;
 } t_contact;
 
-// t_contact Newcontact(gchar *Prenom, gchar *Nom, gchar *cp, gchar *number)
-// {
-//     t_contact contact;
-//     contact.Prenom = Prenom;
-//     contact.Nom = Nom;
-//     contact.cp = cp;
-//     contact.number = number;
-//     return contact;
-// }
 
 void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
 {
@@ -76,45 +67,37 @@ void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder
                                                       NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(listView), column);
 
+    listStore = gtk_list_store_new(N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     // Gestion auto du scroll
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollView),
                                    GTK_POLICY_AUTOMATIC,
                                    GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(scrollView), listView);
-    listStore = gtk_list_store_new(N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     gtk_tree_view_set_model(GTK_TREE_VIEW(listView),
                             GTK_TREE_MODEL(listStore));
 }
 
-void add_to_list(GtkWidget *widget, gpointer* user_data)
+void add_to_list(GtkWidget *widget, gpointer user_data)
 {
-    
+
     GtkListStore *store;
     GtkTreeIter iter;
-    GList* Untype_char = NULL;
+    GList *contact = user_data;
+     gchar* nom = g_strdup(gtk_entry_get_text(GTK_ENTRY(contact->data)));
+     contact = contact->next;
+     gchar* prenom = g_strdup(gtk_entry_get_text(GTK_ENTRY(contact->data)));
+    
 
+    data_base_add_contact(contact);
 
-
-    for (GList *encours = user_data;encours != NULL; encours = encours->next){
-        Untype_char = g_list_append(Untype_char,g_strdup(gtk_entry_get_text(GTK_ENTRY(encours->data))));
-    }
-
-    data_base_add_contact(Untype_char);
-    gchar* nom = Untype_char->data;
-    GList* Prenom_list = Untype_char->next;
-    gchar* prenom = Prenom_list->data;
     store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(listView)));
-
+    
+    
     gtk_list_store_append(store, &iter);
     gtk_list_store_set(store, &iter,
                        NAME_COLUMN, prenom,
                        LAST_NAME_COLUMN, nom,
                        -1);
-}
-
-void GetInformation(t_contact contact)
-{
-    printf("lalal\n");
 }
 
 void ShowModal()
@@ -135,18 +118,21 @@ void ShowModal()
     GtkWidget *New_user_number3 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number3"));
     GtkWidget *New_user_email = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_email"));
     GtkWidget *New_user_note = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_note"));
-
-    contact = g_list_append(contact, New_user_name);
-    contact = g_list_append(contact, New_user_last_name);
-    contact = g_list_append(contact, New_user_email);
-    contact = g_list_append(contact, New_user_adress);
-    contact = g_list_append(contact, New_user_cp);
+    
+    contact = g_list_append(contact,New_user_name);
+    contact= g_list_append(contact,New_user_last_name);
+    contact = g_list_append(contact,New_user_email);
+    contact = g_list_append(contact,New_user_adress);
+    contact = g_list_append(contact,New_user_cp);
 
     //TODO contact = g_list_append(contact,New_user_type))));
-    contact = g_list_append(contact, New_user_number1);
-    contact = g_list_append(contact, New_user_number2);
-    contact = g_list_append(contact, New_user_number3);
-    contact = g_list_append(contact, New_user_note);
+
+    contact = g_list_append(contact,NULL);
+    contact = g_list_append(contact,New_user_number1);
+    contact = g_list_append(contact,New_user_number2);
+    contact = g_list_append(contact,New_user_number3);
+    contact = g_list_append(contact,New_user_note);
+   
 
     g_signal_connect(Add_user, "clicked", G_CALLBACK(add_to_list), contact);
     gtk_dialog_run(GTK_DIALOG(Dialog_box));
@@ -173,8 +159,31 @@ void remove_item(GtkWidget *widget, gpointer selection)
     }
 }
 
-void prog_exit(void)
-{
+void see_details(GtkWidget *widget, gpointer user_data){
+    GtkTreeIter iter;
+  GtkTreeModel *model;
+  gchar *value;
+
+
+if (gtk_tree_selection_get_selected(
+      GTK_TREE_SELECTION(widget), &model, &iter)) {
+
+    gtk_tree_model_get(model, &iter, NAME_COLUMN, &value,  -1);
+    gtk_label_set_text(GTK_LABEL(user_data), value);
+    g_free(value);
+  }
+    //  const gchar *number;
+
+  if (gtk_tree_selection_get_selected(
+      GTK_TREE_SELECTION(widget), &model, &iter)) {
+
+    gtk_tree_model_get(model, &iter, NAME_COLUMN, &value,  -1);
+
+    g_free(value);
+  }
+    
+}
+void prog_exit(void){
     data_base_close();
     gtk_main_quit();
 }
@@ -182,7 +191,6 @@ void prog_exit(void)
 gint main(gint argc, gchar **argv)
 {
     data_base_init();
-    init_id();
     GtkBuilder *builder = NULL;
     GtkListStore *listStore;
     GtkWidget *window;
@@ -192,6 +200,7 @@ gint main(gint argc, gchar **argv)
     GError *error = NULL;
     gchar *filename = NULL;
     GtkTreeSelection *selection;
+    GtkWidget *user_name_right;
     gtk_init(&argc, &argv);
 
     // fichier Glade
@@ -205,7 +214,7 @@ gint main(gint argc, gchar **argv)
     contact_list = GTK_WIDGET(gtk_builder_get_object(builder, "contact_list"));
     contact_new = GTK_WIDGET(gtk_builder_get_object(builder, "contact_new"));
     contact_remove = GTK_WIDGET(gtk_builder_get_object(builder, "contact_remove"));
-
+    user_name_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_name_right"));
     /* listStore */
     listStore = gtk_list_store_new(N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
@@ -217,10 +226,11 @@ gint main(gint argc, gchar **argv)
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(prog_exit), NULL);
     g_signal_connect(contact_new, "clicked", G_CALLBACK(ShowModal), NULL);
     g_signal_connect(G_OBJECT(contact_remove), "clicked", G_CALLBACK(remove_item), selection);
+     g_signal_connect(selection, "changed", G_CALLBACK(see_details),user_name_right);
 
     gtk_widget_show_all(window);
     //* gcc -fanalyzer -Wall -Wextra data_base.c interface.c -I. -o  contact_book -g `pkg-config --cflags --libs gtk+-3.0` -lsqlite3  && contact_book
-    //* sudo apt-get install -y libsqlite3-dev
+    //* sudo apt-get install -y libsqlite3-dev 
     gtk_main();
 
     return 0;
