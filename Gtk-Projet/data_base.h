@@ -1,6 +1,8 @@
 #include <sqlite3.h>
 #include <gtk/gtk.h>
 
+
+
 #define CONTACT_SIZE ((guint8)11)
 
 extern void data_base_init();

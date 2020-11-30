@@ -2,7 +2,21 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include "data_base.h"
+gint _id = 0;
+//TODO Gestion de l'id
+void init_id(){
+    sqlite3_stmt *commande;
+    sqlite3 *db;
+    sqlite3_open("contacts_base.db",&db);
+    sqlite3_prepare_v2(db,"SELECT * FROM contact_list",-1,&commande, NULL);
 
+    while (SQLITE_ROW == sqlite3_step(commande)){
+        _id++;
+    }
+    sqlite3_finalize(commande);
+    g_print("_id = %d\n", _id);
+    sqlite3_close(db);
+}
 enum
 {
     USER_NAME,
@@ -45,7 +59,6 @@ typedef struct Contact_struct
 //     return contact;
 // }
 
-
 void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
 {
     GtkCellRenderer *cellRenderer;
@@ -87,22 +100,25 @@ void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder
                             GTK_TREE_MODEL(listStore));
 }
 
-void add_to_list(GtkWidget *widget, gpointer user_data)
+void add_to_list(GtkWidget *widget, gpointer* user_data)
 {
-
+    
     GtkListStore *store;
     GtkTreeIter iter;
-    GList *contact = user_data;
-     gchar* nom = g_strdup(gtk_entry_get_text(GTK_ENTRY(contact->data)));
-     contact = contact->next;
-     gchar* prenom = g_strdup(gtk_entry_get_text(GTK_ENTRY(contact->data)));
-    
+    GList* Untype_char = NULL;
 
-    data_base_add_contact(contact);
 
+
+    for (GList *encours = user_data;encours != NULL; encours = encours->next){
+        Untype_char = g_list_append(Untype_char,g_strdup(gtk_entry_get_text(GTK_ENTRY(encours->data))));
+    }
+
+    data_base_add_contact(Untype_char);
+    gchar* nom = Untype_char->data;
+    GList* Prenom_list = Untype_char->next;
+    gchar* prenom = Prenom_list->data;
     store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(listView)));
-    
-    
+
     gtk_list_store_append(store, &iter);
     gtk_list_store_set(store, &iter,
                        NAME_COLUMN, prenom,
@@ -133,21 +149,18 @@ void ShowModal()
     GtkWidget *New_user_number3 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number3"));
     GtkWidget *New_user_email = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_email"));
     GtkWidget *New_user_note = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_note"));
-    
-    contact = g_list_append(contact,New_user_name);
-    contact= g_list_append(contact,New_user_last_name);
-    contact = g_list_append(contact,New_user_email);
-    contact = g_list_append(contact,New_user_adress);
-    contact = g_list_append(contact,New_user_cp);
+
+    contact = g_list_append(contact, New_user_name);
+    contact = g_list_append(contact, New_user_last_name);
+    contact = g_list_append(contact, New_user_email);
+    contact = g_list_append(contact, New_user_adress);
+    contact = g_list_append(contact, New_user_cp);
 
     //TODO contact = g_list_append(contact,New_user_type))));
-
-    contact = g_list_append(contact,NULL);
-    contact = g_list_append(contact,New_user_number1);
-    contact = g_list_append(contact,New_user_number2);
-    contact = g_list_append(contact,New_user_number3);
-    contact = g_list_append(contact,New_user_note);
-   
+    contact = g_list_append(contact, New_user_number1);
+    contact = g_list_append(contact, New_user_number2);
+    contact = g_list_append(contact, New_user_number3);
+    contact = g_list_append(contact, New_user_note);
 
     g_signal_connect(Add_user, "clicked", G_CALLBACK(add_to_list), contact);
     gtk_dialog_run(GTK_DIALOG(Dialog_box));
@@ -174,7 +187,8 @@ void remove_item(GtkWidget *widget, gpointer selection)
     }
 }
 
-void prog_exit(void){
+void prog_exit(void)
+{
     data_base_close();
     gtk_main_quit();
 }
@@ -182,6 +196,7 @@ void prog_exit(void){
 gint main(gint argc, gchar **argv)
 {
     data_base_init();
+    init_id();
     GtkBuilder *builder = NULL;
     GtkListStore *listStore;
     GtkWidget *window;
@@ -219,7 +234,7 @@ gint main(gint argc, gchar **argv)
 
     gtk_widget_show_all(window);
     //* gcc -fanalyzer -Wall -Wextra data_base.c interface.c -I. -o  contact_book -g `pkg-config --cflags --libs gtk+-3.0` -lsqlite3  && contact_book
-    //* sudo apt-get install -y libsqlite3-dev 
+    //* sudo apt-get install -y libsqlite3-dev
     gtk_main();
 
     return 0;

@@ -1,5 +1,6 @@
 #include "data_base.h"
 static sqlite3 *_db;
+
 extern void data_base_init()
 {
     gchar *errorsql = "Erreur sur la base de données";
@@ -79,6 +80,7 @@ extern GList *data_base_lookup(gchar *recherche)
         }
         g_print("\n");
     }
+    sqlite3_finalize(commande);
     return Contacts;
 }
 
