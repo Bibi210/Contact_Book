@@ -31,12 +31,14 @@ typedef struct Contact_struct
     GtkWidget *Mail;
     GtkWidget *Adress;
     GtkWidget *cp;
+    GtkWidget *type;
     GtkWidget *number1;
     GtkWidget *number2;
     GtkWidget *number3;
 } t_contact;
 
-typedef struct {
+typedef struct
+{
     GtkTreeSelection *selection;
     t_contact *Edit_contact;
 } t_edit;
@@ -47,6 +49,7 @@ typedef struct Contact_hash_struct
     gchar *Mail;
     gchar *Adress;
     gchar *cp;
+    gchar *type;
     gchar *number1;
     gchar *number2;
     gchar *number3;
@@ -54,7 +57,7 @@ typedef struct Contact_hash_struct
 
 static void print_data(int *key, int *value)
 {
-	printf("%d:%d\n", *key, *value);
+    printf("%d:%d\n", *key, *value);
 }
 
 void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
@@ -84,7 +87,6 @@ void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder
     listStore = gtk_list_store_new(N_COLUMN, G_TYPE_STRING, G_TYPE_STRING);
     gtk_tree_view_set_model(GTK_TREE_VIEW(listView),
                             GTK_TREE_MODEL(listStore));
-    
 }
 
 void add_to_list(GtkWidget *widget, gpointer user_data)
@@ -103,10 +105,12 @@ void add_to_list(GtkWidget *widget, gpointer user_data)
     gchar *number1 = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->number1)));
     gchar *number2 = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->number2)));
     gchar *number3 = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->number3)));
+    gchar *type = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(d->type));
     guint id = g_hash_table_size(hashContact);
     new->Prenom = prenom;
     new->Nom = nom;
     new->cp = cp;
+    new->type = type;
     new->Adress = adress;
     new->Mail = mail;
     new->number1 = number1;
@@ -133,6 +137,7 @@ void ShowModal()
     GtkWidget *New_user_number1;
     GtkWidget *New_user_number2;
     GtkWidget *New_user_number3;
+    GtkWidget *New_user_type;
     t_contact *contact = g_try_malloc(sizeof(t_contact));
 
     //  Element graphique Glade
@@ -145,6 +150,7 @@ void ShowModal()
     New_user_number1 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number1"));
     New_user_number2 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number2"));
     New_user_number3 = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_number3"));
+    New_user_type = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_type"));
     GtkWidget *Dialog_box = GTK_WIDGET(gtk_builder_get_object(builder, "Dialog_box"));
     Add_user = GTK_WIDGET(gtk_builder_get_object(builder, "Add_user"));
     contact->Prenom = New_user_name;
@@ -152,6 +158,7 @@ void ShowModal()
     contact->Mail = New_user_email;
     contact->Adress = New_user_adress;
     contact->cp = New_user_cp;
+    contact->type = New_user_type;
     contact->number1 = New_user_number1;
     contact->number2 = New_user_number2;
     contact->number3 = New_user_number3;
@@ -174,12 +181,12 @@ void ShowModal()
 //             g_strncasecmp(entry, UnType->number1, entry_len) == 0 ||
 //             g_strncasecmp(entry, UnType->number2, entry_len) == 0 ||
 //             g_strncasecmp(entry, UnType->number3, entry_len) == 0 ){
-            
+
 //             g_print("%s\n",UnType->Nom);
 //             //TODO Faire un machin avec UnType
 //         }
 //     }
-    
+
 // }
 void remove_item(GtkWidget *widget, gpointer selection)
 {
@@ -190,28 +197,26 @@ void remove_item(GtkWidget *widget, gpointer selection)
     listStore = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(listView)));
     model = gtk_tree_view_get_model(GTK_TREE_VIEW(listView));
 
-    if (gtk_tree_model_get_iter_first(model, &iter) == FALSE)
-    {
-        return;
-    }
+            if (gtk_tree_model_get_iter_first(model, &iter) == FALSE)
+            {
+                return;
+            }
 
-    if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection),
-                                        &model, &iter))
-    {
-        gtk_list_store_remove(listStore, &iter);
-    }
+            if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection),
+                                                &model, &iter))
+            {
+                gtk_list_store_remove(listStore, &iter);
+            }
 }
 
 void details_view(GtkWidget *widget, gpointer contact)
 {
 
-    
     GtkTreeIter iter;
     GtkTreeModel *model;
     gchar *value;
     t_contact *data = contact;
     t_contact_hash *nouve;
-
 
     if (gtk_tree_selection_get_selected(
             GTK_TREE_SELECTION(widget), &model, &iter))
@@ -224,6 +229,7 @@ void details_view(GtkWidget *widget, gpointer contact)
         gtk_label_set_text(GTK_LABEL(data->Adress), nouve->Adress);
         gtk_label_set_text(GTK_LABEL(data->Mail), nouve->Mail);
         gtk_label_set_text(GTK_LABEL(data->cp), nouve->cp);
+        gtk_label_set_text(GTK_LABEL(data->type), nouve->type);
         gtk_label_set_text(GTK_LABEL(data->number1), nouve->number1);
         gtk_label_set_text(GTK_LABEL(data->number2), nouve->number2);
         gtk_label_set_text(GTK_LABEL(data->number3), nouve->number3);
@@ -231,9 +237,13 @@ void details_view(GtkWidget *widget, gpointer contact)
     }
 }
 
-void Edit_mode(){
+void Edit_mode()
+{
     GtkBuilder *builder = NULL;
     t_contact_hash *nouve;
+    GtkTreeIter iter;
+    gchar *value;
+    GtkTreeModel *model;
     t_contact *data = g_try_malloc(sizeof(t_contact));
     builder = gtk_builder_new_from_file("./projetGTK.glade");
     GtkWidget *Edit_button = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_button"));
@@ -245,7 +255,22 @@ void Edit_mode(){
     GtkWidget *numero1_edit = GTK_WIDGET(gtk_builder_get_object(builder, "numero1_edit"));
     GtkWidget *numero2_edit = GTK_WIDGET(gtk_builder_get_object(builder, "numero2_edit"));
     GtkWidget *numero3_edit = GTK_WIDGET(gtk_builder_get_object(builder, "numero3_edit"));
- 
+
+if (gtk_tree_selection_get_selected(
+            GTK_TREE_SELECTION(selection), &model, &iter))
+    {
+
+        gtk_tree_model_get(model, &iter, LAST_NAME_COLUMN, &value, -1);
+        nouve = g_hash_table_lookup(hashContact, value);
+    gtk_entry_set_text(GTK_ENTRY(Last_name_edit),nouve->Nom);
+    gtk_entry_set_text(GTK_ENTRY(Name_edit),nouve->Nom);
+    gtk_entry_set_text(GTK_ENTRY(Email_edit), nouve->Mail);
+    gtk_entry_set_text(GTK_ENTRY(cp_edit), nouve->Adress);
+    gtk_entry_set_text(GTK_ENTRY(Adress_edit), nouve->cp );
+    gtk_entry_set_text(GTK_ENTRY(numero1_edit),nouve->number1);
+    gtk_entry_set_text(GTK_ENTRY(numero2_edit),nouve->number2);
+    gtk_entry_set_text(GTK_ENTRY(numero3_edit),nouve->number3);}
+
     data->Prenom = Name_edit;
     data->Nom = Last_name_edit;
     data->Mail = Email_edit;
@@ -254,15 +279,14 @@ void Edit_mode(){
     data->number1 = numero1_edit;
     data->number2 = numero2_edit;
     data->number3 = numero3_edit;
+    g_print("edit %s\n",gtk_entry_get_text(GTK_ENTRY(Last_name_edit)));
+
     GtkWidget *Edit_contact = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_contact"));
     g_signal_connect(Edit_button, "clicked", G_CALLBACK(add_to_list), data);
     g_signal_connect(Edit_button, "clicked", G_CALLBACK(remove_item), selection);
 
     gtk_dialog_run(GTK_DIALOG(Edit_contact));
-    
 
-
-    g_print("edit\n");
 }
 
 gint main(gint argc, gchar **argv)
@@ -279,6 +303,7 @@ gint main(gint argc, gchar **argv)
     gchar *filename = NULL;
     GtkWidget *user_last_name_right;
     GtkWidget *user_cp_right;
+    GtkWidget *user_type_right;
     GtkWidget *user_email_right;
     GtkWidget *user_adress_right;
     GtkWidget *user_number1_right;
@@ -304,6 +329,7 @@ gint main(gint argc, gchar **argv)
     user_name_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_name_right"));
     user_last_name_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_first_name_right"));
     user_cp_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_cp_right"));
+    user_type_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_type_right"));
     user_email_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_email_right"));
     user_adress_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_adress_right"));
     user_number1_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_number1_right"));
@@ -325,27 +351,29 @@ gint main(gint argc, gchar **argv)
     contact->Mail = user_email_right;
     contact->Adress = user_adress_right;
     contact->cp = user_cp_right;
+    contact->type = user_type_right;
     contact->number1 = user_number1_right;
     contact->number2 = user_number2_right;
     contact->number3 = user_number3_right;
     listView = gtk_tree_view_new();
-// =================================================
-newEdit->Nom = Last_name_edit;
-newEdit->Prenom = Name_edit;
-newEdit->Mail = Email_edit;
-newEdit->cp = cp_edit;
-newEdit->Adress = Adress_edit;
-newEdit->number1 = numero1_edit;
-newEdit->number2 = numero2_edit;
-newEdit->number3 = numero3_edit;
+    // =================================================
+    newEdit->Nom = Last_name_edit;
+    newEdit->Prenom = Name_edit;
+    newEdit->Mail = Email_edit;
+    newEdit->cp = cp_edit;
+    newEdit->Adress = Adress_edit;
+    newEdit->number1 = numero1_edit;
+    newEdit->number2 = numero2_edit;
+    newEdit->number3 = numero3_edit;
 
     initList(listView, listStore, builder);
     selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(listView));
+ 
     g_signal_connect(G_OBJECT(window), "destroy", (GCallback)gtk_main_quit, NULL);
     g_signal_connect(contact_new, "clicked", G_CALLBACK(ShowModal), NULL);
     g_signal_connect(contact_remove, "clicked", G_CALLBACK(remove_item), selection);
     g_signal_connect(selection, "changed", G_CALLBACK(details_view), contact);
-    g_signal_connect(Edit_contact_btn, "clicked", G_CALLBACK(Edit_mode),NULL);
+    g_signal_connect(Edit_contact_btn, "clicked", G_CALLBACK(Edit_mode), NULL);
     // g_signal_connect(search_bar, "search-changed", G_CALLBACK(search_view),NULL);
     gtk_widget_show_all(window);
 
@@ -355,7 +383,39 @@ newEdit->number3 = numero3_edit;
 }
 
 //TODO Search button callback
-//TODO Modify bouton + callback 
+//TODO Modify bouton + callback
+//TODO Ajout gestion data base START and QUIT
+//TODO REparer le btn type
+//TODO Reparer warn dans search
+
+//         gtk_tree_model_get(model, &iter, LAST_NAME_COLUMN, &value, -1);
+//         nouve = g_hash_table_lookup(hashContact, value);
+//         gtk_label_set_text(GTK_LABEL(Last_name_edit), Last_name_edit);
+//         gtk_label_set_text(GTK_LABEL(Name_edit), Name_edit);
+//         gtk_label_set_text(GTK_LABEL(Adress_edit), Adress_edit);
+//         gtk_label_set_text(GTK_LABEL(Email_edit), Email_edit);
+//         gtk_label_set_text(GTK_LABEL(cp_edit), cp_edit);
+//         gtk_label_set_text(GTK_LABEL(numero1_edit), numero1_edit);
+//         gtk_label_set_text(GTK_LABEL(numero2_edit), numero2_edit);
+//         gtk_label_set_text(GTK_LABEL(numero3_edit), numero3_edit);
+//         g_free(value);
+//     }
+
+//     g_signal_connect(G_OBJECT(window), "destroy", (GCallback)gtk_main_quit, NULL);
+//     g_signal_connect(contact_new, "clicked", G_CALLBACK(ShowModal), NULL);
+//     g_signal_connect(contact_remove, "clicked", G_CALLBACK(remove_item), selection);
+//     g_signal_connect(selection, "changed", G_CALLBACK(details_view), contact);
+//     g_signal_connect(Edit_contact_btn, "clicked", G_CALLBACK(Edit_mode),NULL);
+//     // g_signal_connect(search_bar, "search-changed", G_CALLBACK(search_view),NULL);
+//     gtk_widget_show_all(window);
+
+//     gtk_main();
+
+//     return 0;
+// }
+
+//TODO Search button callback
+//TODO Modify bouton + callback
 //TODO Ajout gestion data base START and QUIT
 //TODO REparer le btn type
 //TODO Reparer warn dans search
