@@ -2,15 +2,7 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 
-//  GtkWidget *Edit_contact_btn = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_contact_btn"));
-//     GtkWidget *Last_name_edit = GTK_WIDGET(gtk_builder_get_object(builder, "Last_name_edit"));
-//     GtkWidget *Name_edit = GTK_WIDGET(gtk_builder_get_object(builder, "Name_edit"));
-//     GtkWidget *Email_edit = GTK_WIDGET(gtk_builder_get_object(builder, "Email_edit"));
-//     GtkWidget *cp_edit = GTK_WIDGET(gtk_builder_get_object(builder, "cp_edit"));
-//     GtkWidget *Adress_edit = GTK_WIDGET(gtk_builder_get_object(builder, "Adress_edit"));
-//     GtkWidget *numero1_edit = GTK_WIDGET(gtk_builder_get_object(builder, "numero1_edit"));
-//     GtkWidget *numero2_edit = GTK_WIDGET(gtk_builder_get_object(builder, "numero2_edit"));
-//     GtkWidget *numero3_edit = GTK_WIDGET(gtk_builder_get_object(builder, "numero3_edit"));
+
 enum
 {
 
@@ -397,4 +389,8 @@ gint main(gint argc, gchar **argv)
 
 //TODO Search button Pop-up
 //TODO Ajout gestion data base START and QUIT
+// TODO Ajouter la combobox text a Edit modal
+// TODO Creer une modal pour search
+// TODO Ajouter le nombre contact
+
 
