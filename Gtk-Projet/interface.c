@@ -99,6 +99,7 @@ void add_to_list(GtkWidget *widget, gpointer user_data)
     gchar *number3 = g_strdup(gtk_entry_get_text(GTK_ENTRY(d->number3)));
     gchar *type = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(d->type));
     guint id = g_hash_table_size(hashContact);
+    //TODO Here For Refuser invalide contact
     new->Prenom = prenom;
     new->Nom = nom;
     new->cp = cp;
@@ -182,13 +183,14 @@ void search_view(gchar* entry)
         {
 
             g_print("%s\n", (gchar *)UnType->Nom);
-            //TODO Faire un machin add to search results
+            //TODO Faire add to search results
         }
     }
 }
 
-void Search(GtkWidget *btn,gpointer entry){
-    search_view((gchar*)entry);
+void Search(GtkWidget *btn,gpointer search_bar){
+    gchar* entry = g_strdup(gtk_entry_get_text(GTK_ENTRY(search_bar)));
+    search_view(entry);
 }
 
 void remove_item(GtkWidget *widget, gpointer selection)
@@ -379,7 +381,9 @@ gint main(gint argc, gchar **argv)
     g_signal_connect(contact_remove, "clicked", G_CALLBACK(remove_item), selection);
     g_signal_connect(selection, "changed", G_CALLBACK(details_view), contact);
     g_signal_connect(Edit_contact_btn, "clicked", G_CALLBACK(Edit_mode), NULL);
-    g_signal_connect(search_button, "clicked", G_CALLBACK(Search),g_strdup(gtk_entry_get_text(GTK_ENTRY(search_bar))));
+{
+    g_signal_connect(search_button, "clicked", G_CALLBACK(Search),search_bar);
+}
     gtk_widget_show_all(window);
 
     gtk_main();
@@ -387,10 +391,14 @@ gint main(gint argc, gchar **argv)
     return 0;
 }
 
-//TODO Search button Pop-up
+//! BIBI
 //TODO Ajout gestion data base START and QUIT
+// TODO Compter les contacts
+// TODO Refuser un contact qui n'a pas Nom Prenom et 1 num
+
+
+//! Daouda
+//TODO Search button Pop-up
 // TODO Ajouter la combobox text a Edit modal
 // TODO Creer une modal pour search
-// TODO Ajouter le nombre contact
-
-
+// TODO Key for HashTable nom + Prenom + all_num
