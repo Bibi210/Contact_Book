@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gtk/gtk.h>
+#include "data_base.h"
 
 enum
 {
@@ -9,6 +10,21 @@ enum
     LAST_NAME_COLUMN,
     N_COLUMN
 };
+
+typedef struct Contact_hash_struct
+{
+    gchar *Nom;
+    gchar *Prenom;
+    gchar *Mail;
+    gchar *Adress;
+    gchar *cp;
+    gchar *type;
+    gchar *number1;
+    gchar *number2;
+    gchar *number3;
+    gint type_id;
+} t_contact_hash;
+
 GtkWidget *listView;
 GHashTable *hashContact;
 gint *id = 0;
@@ -48,19 +64,7 @@ typedef struct
     GtkTreeSelection *selection;
     t_contact *Edit_contact;
 } t_edit;
-typedef struct Contact_hash_struct
-{
-    gchar *Nom;
-    gchar *Prenom;
-    gchar *Mail;
-    gchar *Adress;
-    gchar *cp;
-    gchar *type;
-    gchar *number1;
-    gchar *number2;
-    gchar *number3;
-    gint type_id;
-} t_contact_hash;
+
 
 void hide_widget(GtkWidget *widget,GtkWidget *widget_to_hide){
     gtk_widget_hide(widget_to_hide);
@@ -167,7 +171,7 @@ void add_to_list(GtkWidget *widget, gpointer user_data)
     new->number1 = number1;
     new->number2 = number2;
     new->number3 = number3;
-    new->type_id = type_id;
+
     gchar *key = g_strconcat(nom, prenom, NULL);
     g_hash_table_insert(hashContact, key, new);
     gtk_list_store_append(store, &iter);
