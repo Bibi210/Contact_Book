@@ -47,6 +47,10 @@ typedef struct Contact_hash_struct
     gint type_id;
 } t_contact_hash;
 
+void hide_widget(GtkWidget *widget,GtkWidget *widget_to_hide){
+    gtk_widget_hide(widget_to_hide);
+
+};
 static void print_data(int *key, int *value)
 {
     printf("%d:%d\n", *key, *value);
@@ -124,6 +128,7 @@ void ShowModal()
 {
     GtkBuilder *builder = NULL;
     GtkWidget *Add_user;
+    GtkWidget *Cancel;
     GtkWidget *New_user_name;
     GtkWidget *New_user_last_name;
     GtkWidget *New_user_cp;
@@ -148,6 +153,7 @@ void ShowModal()
     New_user_type = GTK_WIDGET(gtk_builder_get_object(builder, "New_user_type"));
     GtkWidget *Dialog_box = GTK_WIDGET(gtk_builder_get_object(builder, "Dialog_box"));
     Add_user = GTK_WIDGET(gtk_builder_get_object(builder, "Add_user"));
+    Cancel = GTK_WIDGET(gtk_builder_get_object(builder, "Cancel"));
     contact->Prenom = New_user_name;
     contact->Nom = New_user_last_name;
     contact->Mail = New_user_email;
@@ -158,6 +164,8 @@ void ShowModal()
     contact->number2 = New_user_number2;
     contact->number3 = New_user_number3;
     g_signal_connect(Add_user, "clicked", G_CALLBACK(add_to_list), contact);
+    g_signal_connect(Add_user, "clicked", G_CALLBACK(hide_widget), Dialog_box);
+    g_signal_connect(Cancel, "clicked", G_CALLBACK(hide_widget), Dialog_box);
     gtk_dialog_run(GTK_DIALOG(Dialog_box));
 }
 
@@ -307,6 +315,7 @@ void Edit_mode()
     GtkWidget *Edit_contact = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_contact"));
     g_signal_connect(Edit_button, "clicked", G_CALLBACK(add_to_list), data);
     g_signal_connect(Edit_button, "clicked", G_CALLBACK(remove_item), selection);
+    g_signal_connect(Edit_button, "clicked", G_CALLBACK(hide_widget), Edit_contact);
 
     gtk_dialog_run(GTK_DIALOG(Edit_contact));
 }
