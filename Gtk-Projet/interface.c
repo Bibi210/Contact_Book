@@ -73,6 +73,15 @@ void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder
     listStore = gtk_list_store_new(N_COLUMN, G_TYPE_STRING, G_TYPE_STRING);
     gtk_tree_view_set_model(GTK_TREE_VIEW(listView),
                             GTK_TREE_MODEL(listStore));
+    // foreach element in database{
+        // elem->
+        // hashmap.insert();
+    //     gtk_list_store_append(store, &iter);
+    // gtk_list_store_set(store, &iter,
+    //                    NAME_COLUMN, prenom,
+    //                    LAST_NAME_COLUMN, nom,
+    //                    -1);
+    }
 }
 
 gboolean is_str_void(gchar *to_test)
