@@ -201,7 +201,8 @@ void remove_item(GtkWidget *widget, gpointer selection)
     GtkListStore *listStore;
     GtkTreeModel *model;
     GtkTreeIter iter;
-
+    gchar *value;
+    gchar *value1;
     listStore = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(listView)));
     model = gtk_tree_view_get_model(GTK_TREE_VIEW(listView));
 
@@ -214,6 +215,10 @@ void remove_item(GtkWidget *widget, gpointer selection)
                                         &model, &iter))
     {
         gtk_list_store_remove(listStore, &iter);
+        gtk_tree_model_get(model, &iter, LAST_NAME_COLUMN, &value, -1);
+        gtk_tree_model_get(model, &iter, NAME_COLUMN, &value1, -1);
+        gchar *key = g_strconcat(value, value1, NULL);
+        // g_hash_table_remove(hashContact,key);
     }
 }
 
@@ -310,50 +315,31 @@ gint main(gint argc, gchar **argv)
 {
     GtkBuilder *builder = NULL;
     GtkListStore *listStore;
-    gchar *txt;
-    GtkWidget *window;
-    GtkWidget *contact_list;
-    GtkWidget *contact_new;
-    GtkWidget *contact_remove;
-    GtkWidget *user_name_right;
-    GError *error = NULL;
-    gchar *filename = NULL;
-    GtkWidget *user_last_name_right;
-    GtkWidget *user_cp_right;
-    GtkWidget *user_type_right;
-    GtkWidget *user_email_right;
-    GtkWidget *user_adress_right;
-    GtkWidget *user_number1_right;
-    GtkWidget *user_number2_right;
-    GtkWidget *user_number3_right;
-    GtkWidget *search_bar;
-    GtkWidget *search_button;
+
     t_contact *contact = g_try_malloc(sizeof(t_contact));
     gtk_init(&argc, &argv);
 
     hashContact = g_hash_table_new(g_str_hash, g_str_equal);
     // fichier Glade
-    builder = gtk_builder_new();
-    filename = g_build_filename("./projetGTK.glade", NULL);
-    gtk_builder_add_from_file(builder, filename, &error);
-    g_free(filename);
-    window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
+    builder = gtk_builder_new_from_file("./projetGTK.glade");
+
+    GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
 
     // Initialiser les elements  glade
-    contact_list = GTK_WIDGET(gtk_builder_get_object(builder, "contact_list"));
-    contact_new = GTK_WIDGET(gtk_builder_get_object(builder, "contact_new"));
-    contact_remove = GTK_WIDGET(gtk_builder_get_object(builder, "contact_remove"));
-    user_name_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_name_right"));
-    user_last_name_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_first_name_right"));
-    user_cp_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_cp_right"));
-    user_type_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_type_right"));
-    user_email_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_email_right"));
-    user_adress_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_adress_right"));
-    user_number1_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_number1_right"));
-    user_number2_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_number2_right"));
-    user_number3_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_number3_right"));
-    search_bar = GTK_WIDGET(gtk_builder_get_object(builder, "search_bar"));
-    search_button = GTK_WIDGET(gtk_builder_get_object(builder, "search_btn"));
+    GtkWidget *contact_list = GTK_WIDGET(gtk_builder_get_object(builder, "contact_list"));
+    GtkWidget *contact_new = GTK_WIDGET(gtk_builder_get_object(builder, "contact_new"));
+    GtkWidget *contact_remove = GTK_WIDGET(gtk_builder_get_object(builder, "contact_remove"));
+    GtkWidget *user_name_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_name_right"));
+    GtkWidget *user_last_name_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_first_name_right"));
+    GtkWidget *user_cp_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_cp_right"));
+    GtkWidget *user_type_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_type_right"));
+    GtkWidget *user_email_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_email_right"));
+    GtkWidget *user_adress_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_adress_right"));
+    GtkWidget *user_number1_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_number1_right"));
+    GtkWidget *user_number2_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_number2_right"));
+    GtkWidget *user_number3_right = GTK_WIDGET(gtk_builder_get_object(builder, "user_number3_right"));
+    GtkWidget *search_bar = GTK_WIDGET(gtk_builder_get_object(builder, "search_bar"));
+    GtkWidget *search_button = GTK_WIDGET(gtk_builder_get_object(builder, "search_btn"));
     GtkWidget *Edit_contact_btn = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_contact_btn"));
 
     // vue de droite
