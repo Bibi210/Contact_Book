@@ -283,7 +283,7 @@ void remove_item(GtkWidget *widget, gpointer selection)
         gtk_list_store_remove(listStore, &iter);
         gtk_tree_model_get(model, &iter, LAST_NAME_COLUMN, &value, -1);
         gtk_tree_model_get(model, &iter, NAME_COLUMN, &value1, -1);
-        gchar *key = g_strconcat(value, value1, NULL);
+        gchar *key = g_strconcat(value1, value, NULL);
         // g_hash_table_remove(hashContact,key);
     }
 }
