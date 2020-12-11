@@ -102,6 +102,10 @@ extern GList* data_base_retrive(void){
     return Contacts;
 }
 
+extern void data_base_clear(void){
+    sqlite3_exec(_db, "DELETE FROM contact_list;", 0, 0, NULL);
+}
+
 extern int print_data_callback(void *useless, gint argc, gchar **argv, gchar **azColName)
 {
 

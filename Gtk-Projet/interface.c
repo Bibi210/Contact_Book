@@ -71,13 +71,7 @@ void hide_widget(GtkWidget *widget,GtkWidget *widget_to_hide){
 
 };
 
-void updateLabel(GtkWidget *label, int num)
-{
-    gchar *display;
-    display = g_strdup_printf("%d", num);         //convert num to str
-    gtk_label_set_text (GTK_LABEL(label), display); //set label to "display"
-    g_free(display);                              //free display
-}
+
 
 void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
 {
@@ -134,7 +128,7 @@ void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder
                            -1);
         g_print("key = %s\n", key);
     }
-    
+    data_base_clear();
 }
 
 gboolean is_str_void(gchar *to_test)
@@ -426,6 +420,12 @@ void contact_book_quit(GtkWidget *widget, gpointer data)
     data_base_close();
     gtk_main_quit();
 }
+void updateLabel(GtkWidget *widget, gpointer nb_label){
+    gchar buffer[99999];
+    g_snprintf(buffer,99999,"%d",g_hash_table_size(hashContact));
+    g_print("%s\n",buffer);
+    gtk_label_set_text(GTK_LABEL(nb_label),buffer);
+}
 
 gint main(gint argc, gchar **argv)
 {
@@ -459,7 +459,7 @@ gint main(gint argc, gchar **argv)
     GtkWidget *search_button = GTK_WIDGET(gtk_builder_get_object(builder, "search_btn"));
     GtkWidget *Edit_contact_btn = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_contact_btn"));
     GtkWidget *number_of_contact = GTK_WIDGET(gtk_builder_get_object(builder, "number_of_contact"));
-
+    
     // updateLabel(number_of_contact,g_hash_table_size(hashContact));
 
     // vue de droite
@@ -486,15 +486,15 @@ gint main(gint argc, gchar **argv)
     {
         g_signal_connect(search_button, "clicked", G_CALLBACK(Search), search_bar);
     }
-    gtk_widget_show_all(window);
 
+    gtk_widget_show_all(window);
+    
     gtk_main();
 
     return 0;
 }
 
 //! BIBI
-// TODO Ajout gestion data base START and QUIT
 // TODO Compter les contacts
 
 //! Daouda

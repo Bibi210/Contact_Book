@@ -15,3 +15,4 @@ extern GList* data_base_lookup(gchar *recherche);
 extern int print_data_callback();
 extern void data_base_print();
 extern GList* data_base_retrive();
+extern void data_base_clear();
