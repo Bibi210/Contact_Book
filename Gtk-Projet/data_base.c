@@ -86,6 +86,22 @@ extern GList *data_base_lookup(gchar *recherche)
     return Contacts;
 }
 
+extern GList* data_base_retrive(void){
+    sqlite3_stmt *commande;
+    GList* Untype = NULL;
+    GList* Contacts = NULL;
+    sqlite3_prepare_v2(_db, "SELECT * FROM contact_list ORDER BY nom",-1,&commande, NULL);
+    while(sqlite3_step(commande) == SQLITE_ROW){
+        Untype = NULL;
+        for(gint i = 0; i < CONTACT_SIZE;i++){
+            gchar *bref = g_strdup((gchar *)sqlite3_column_text(commande, i));
+            Untype = g_list_append(Untype, bref);
+        }
+        Contacts = g_list_append(Contacts, Untype);
+    }
+    return Contacts;
+}
+
 extern int print_data_callback(void *useless, gint argc, gchar **argv, gchar **azColName)
 {
 
