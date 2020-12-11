@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include "data_base.h"
-
 enum
 {
 
@@ -115,14 +114,16 @@ void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder
     for (GList *contact = contact_list; contact != NULL; contact = contact->next)
     {
         un_contact = contact->data;
-        gchar *key = g_strdup(g_strconcat(un_contact->Prenom, un_contact->Nom, NULL));
+        gchar *key = g_strdup(g_strconcat(un_contact->Nom, un_contact->Prenom, NULL));
         g_hash_table_insert(hashContact, key, un_contact);
         gtk_list_store_append(listStore, &iter);
         gtk_list_store_set(listStore, &iter,
                            NAME_COLUMN, un_contact->Prenom,
                            LAST_NAME_COLUMN, un_contact->Nom,
                            -1);
+        g_print("key = %s\n", key);
     }
+    
 }
 
 gboolean is_str_void(gchar *to_test)
