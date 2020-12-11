@@ -14,6 +14,21 @@ GHashTable *hashContact;
 gint *id = 0;
 GtkTreeSelection *selection;
 
+t_contact_hash *cast_glist_to_contact(GList *contact)
+{
+    t_contact_hash *UnType = g_try_malloc0(sizeof(t_contact_hash));
+    assert(UnType);
+    UnType->Nom = g_strdup(g_list_nth_data(contact, 0));
+    UnType->Prenom = g_strdup(g_list_nth_data(contact, 1));
+    UnType->Mail = g_strdup(g_list_nth_data(contact, 2));
+    UnType->Adress = g_strdup(g_list_nth_data(contact, 3));
+    UnType->cp = g_strdup(g_list_nth_data(contact, 4));
+    UnType->type = g_strdup(g_list_nth_data(contact, 5));
+    UnType->number1 = g_strdup(g_list_nth_data(contact, 6));
+    UnType->number2 = g_strdup(g_list_nth_data(contact, 7));
+    UnType->number3 = g_strdup(g_list_nth_data(contact, 8));
+    return UnType;
+}
 typedef struct Contact_struct
 {
     guint *unit;
@@ -46,21 +61,6 @@ typedef struct Contact_hash_struct
     gchar *number3;
 } t_contact_hash;
 
-t_contact_hash *cast_glist_to_contact(GList *contact)
-{
-    t_contact_hash *UnType = g_try_malloc0(sizeof(t_contact_hash));
-    assert(UnType);
-    UnType->Nom = g_strdup(g_list_nth_data(contact, 0));
-    UnType->Prenom = g_strdup(g_list_nth_data(contact, 1));
-    UnType->Mail = g_strdup(g_list_nth_data(contact, 2));
-    UnType->Adress = g_strdup(g_list_nth_data(contact, 3));
-    UnType->cp = g_strdup(g_list_nth_data(contact, 4));
-    UnType->type = g_strdup(g_list_nth_data(contact, 5));
-    UnType->number1 = g_strdup(g_list_nth_data(contact, 6));
-    UnType->number2 = g_strdup(g_list_nth_data(contact, 7));
-    UnType->number3 = g_strdup(g_list_nth_data(contact, 8));
-    return UnType;
-}
 
 void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
 {
