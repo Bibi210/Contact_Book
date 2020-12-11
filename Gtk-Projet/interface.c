@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gtk/gtk.h>
-
+#include "data_base.h"
 enum
 {
 
@@ -74,6 +74,7 @@ void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder
     gtk_tree_view_set_model(GTK_TREE_VIEW(listView),
                             GTK_TREE_MODEL(listStore));
 }
+
 gboolean is_str_void(gchar *to_test)
 {
     if (g_strcmp0(to_test, "") == 0)
@@ -305,8 +306,38 @@ void Edit_mode()
     gtk_dialog_run(GTK_DIALOG(Edit_contact));
 }
 
+GList *cast_contact_GList(t_contact_hash *contact)
+{
+    GList *contact_list = NULL;
+    contact_list = g_list_append(contact_list, g_strdup(contact->Nom));
+    contact_list = g_list_append(contact_list, g_strdup(contact->Prenom));
+    contact_list = g_list_append(contact_list, g_strdup(contact->Mail));
+    contact_list = g_list_append(contact_list, g_strdup(contact->Adress));
+    contact_list = g_list_append(contact_list, g_strdup(contact->cp));
+    contact_list = g_list_append(contact_list, g_strdup(contact->type));
+    contact_list = g_list_append(contact_list, g_strdup(contact->number1));
+    contact_list = g_list_append(contact_list, g_strdup(contact->number2));
+    contact_list = g_list_append(contact_list, g_strdup(contact->number3));
+    return contact_list;
+}
+
+void contact_book_quit(GtkWidget *widget, gpointer data)
+{
+    GList *all_contact = NULL;
+    GList *UnType = NULL;
+    for (all_contact = g_hash_table_get_values(hashContact); all_contact != NULL; all_contact = all_contact->next)
+    {
+        UnType = cast_contact_GList((t_contact_hash *)all_contact->data);
+        data_base_add_contact(UnType);
+    }
+
+    data_base_close();
+    gtk_main_quit();
+}
+
 gint main(gint argc, gchar **argv)
 {
+    data_base_init();
     GtkBuilder *builder = NULL;
     GtkListStore *listStore;
     GtkWidget *window;
@@ -386,7 +417,7 @@ gint main(gint argc, gchar **argv)
     initList(listView, listStore, builder);
     selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(listView));
 
-    g_signal_connect(G_OBJECT(window), "destroy", (GCallback)gtk_main_quit, NULL);
+    g_signal_connect(G_OBJECT(window), "destroy", (GCallback)contact_book_quit, NULL);
     g_signal_connect(contact_new, "clicked", G_CALLBACK(ShowModal), NULL);
     g_signal_connect(contact_remove, "clicked", G_CALLBACK(remove_item), selection);
     g_signal_connect(selection, "changed", G_CALLBACK(details_view), contact);
