@@ -2,49 +2,6 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
-  <object class="GtkDialog" id="Add_error">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Formulaire Incorect.</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkDialog" id="Dialog_box">
     <property name="name">Dialog_box</property>
     <property name="can_focus">False</property>
@@ -452,6 +409,16 @@
               </packing>
             </child>
             <child>
+              <object class="GtkEntry" id="type_edit">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">5</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkEntry" id="numero1_edit">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -485,7 +452,7 @@
               <object class="GtkLabel" id="last_name_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Nom</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -496,7 +463,7 @@
               <object class="GtkLabel" id="name_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Prenom</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -507,7 +474,7 @@
               <object class="GtkLabel" id="Email_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Email</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -518,7 +485,7 @@
               <object class="GtkLabel" id="Adress_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Adresse</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -529,7 +496,7 @@
               <object class="GtkLabel" id="cp_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">CP</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -540,7 +507,7 @@
               <object class="GtkLabel" id="type_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">type</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -551,7 +518,7 @@
               <object class="GtkLabel" id="numero1_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">numero</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -562,7 +529,7 @@
               <object class="GtkLabel" id="numero2_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">numero</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -573,26 +540,11 @@
               <object class="GtkLabel" id="numero3_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">numero</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
                 <property name="top_attach">8</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkComboBoxText" id="type_edit">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <items>
-                  <item translatable="yes">Perso</item>
-                  <item translatable="yes">Pro</item>
-                  <item translatable="yes">Autre</item>
-                </items>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">5</property>
               </packing>
             </child>
           </object>
@@ -1038,22 +990,6 @@
             <property name="resize">False</property>
             <property name="shrink">True</property>
           </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkApplicationWindow" id="search_tree_view">
-    <property name="can_focus">False</property>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
-    <child>
-      <object class="GtkScrolledWindow" id="search_list_scroll">
-        <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="shadow_type">in</property>
-        <child>
-          <placeholder/>
         </child>
       </object>
     </child>
