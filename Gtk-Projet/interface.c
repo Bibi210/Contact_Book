@@ -29,6 +29,7 @@ GtkWidget *listView;
 GHashTable *hashContact;
 gint *id = 0;
 GtkTreeSelection *selection;
+gint nb_contact = 0;
 
 t_contact_hash *cast_glist_to_contact(GList *contact)
 {
@@ -126,7 +127,7 @@ void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder
                            LAST_NAME_COLUMN, un_contact->Nom,
                            NUMBER_COLUMN, un_contact->number1,
                            -1);
-        g_print("key = %s\n", key);
+        nb_contact = g_hash_table_size(hashContact);
     }
     data_base_clear();
 }
@@ -188,6 +189,7 @@ void add_to_list(GtkWidget *widget, gpointer user_data)
                        LAST_NAME_COLUMN, nom,
                        NUMBER_COLUMN, number1,
                        -1);
+    nb_contact = g_hash_table_size(hashContact);
 }
 
 void ShowModal()
@@ -296,6 +298,7 @@ void remove_item(GtkWidget *widget, gpointer selection)
         g_hash_table_remove(hashContact,key);
         gtk_list_store_remove(listStore, &iter);
     }
+    nb_contact = g_hash_table_size(hashContact);
 }
 
 void details_view(GtkWidget *widget, gpointer contact)
@@ -416,7 +419,7 @@ void contact_book_quit(GtkWidget *widget, gpointer data)
         UnType = cast_contact_to_glist((t_contact_hash *)all_contact->data);
         data_base_add_contact(UnType);
     }
-
+    g_print("Il y a :%d contact sauvegarder \n",nb_contact);
     data_base_close();
     gtk_main_quit();
 }
