@@ -29,7 +29,7 @@ GtkWidget *listView;
 GHashTable *hashContact;
 gint *id = 0;
 GtkTreeSelection *selection;
-gint nb_contact = 0;
+gint nb_contact = 0; //TODO: Render this value
 
 t_contact_hash *cast_glist_to_contact(GList *contact)
 {
