@@ -30,7 +30,7 @@ GHashTable *hashContact;
 gint *id = 0;
 GtkTreeSelection *selection;
 gint nb_contact = 0; //TODO: Render this value
-
+GtkWidget *number_of_contact;
 t_contact_hash *cast_glist_to_contact(GList *contact)
 {
     t_contact_hash *UnType = g_try_malloc0(sizeof(t_contact_hash));
@@ -141,6 +141,14 @@ gboolean is_str_void(gchar *to_test)
     return FALSE;
 }
 
+void updateLabel(GtkLabel *label)
+{
+    gchar *display;
+    display = g_strdup_printf("%d", nb_contact);         //convert num to str
+    gtk_label_set_text (GTK_LABEL(label), display); //set label to "display"
+    g_free(display);                              //free display
+}
+
 void add_to_list(GtkWidget *widget, gpointer user_data)
 {
 
@@ -190,6 +198,7 @@ void add_to_list(GtkWidget *widget, gpointer user_data)
                        NUMBER_COLUMN, number1,
                        -1);
     nb_contact = g_hash_table_size(hashContact);
+    updateLabel(GTK_LABEL(number_of_contact));
 }
 
 void ShowModal()
@@ -299,6 +308,8 @@ void remove_item(GtkWidget *widget, gpointer selection)
         gtk_list_store_remove(listStore, &iter);
     }
     nb_contact = g_hash_table_size(hashContact);
+    updateLabel(GTK_LABEL(number_of_contact));
+
 }
 
 void details_view(GtkWidget *widget, gpointer contact)
@@ -423,12 +434,8 @@ void contact_book_quit(GtkWidget *widget, gpointer data)
     data_base_close();
     gtk_main_quit();
 }
-void updateLabel(GtkWidget *widget, gpointer nb_label){
-    gchar buffer[99999];
-    g_snprintf(buffer,99999,"%d",g_hash_table_size(hashContact));
-    g_print("%s\n",buffer);
-    gtk_label_set_text(GTK_LABEL(nb_label),buffer);
-}
+
+
 
 gint main(gint argc, gchar **argv)
 {
@@ -461,10 +468,10 @@ gint main(gint argc, gchar **argv)
     GtkWidget *search_bar = GTK_WIDGET(gtk_builder_get_object(builder, "search_bar"));
     GtkWidget *search_button = GTK_WIDGET(gtk_builder_get_object(builder, "search_btn"));
     GtkWidget *Edit_contact_btn = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_contact_btn"));
-    GtkWidget *number_of_contact = GTK_WIDGET(gtk_builder_get_object(builder, "number_of_contact"));
+    number_of_contact = GTK_WIDGET(gtk_builder_get_object(builder, "number_of_contact"));
     
-    // updateLabel(number_of_contact,g_hash_table_size(hashContact));
-
+    updateLabel(GTK_LABEL(number_of_contact));
+    
     // vue de droite
     contact->Prenom = user_name_right;
     contact->Nom = user_last_name_right;
@@ -503,3 +510,6 @@ gint main(gint argc, gchar **argv)
 //! Daouda
 //TODO Search button Pop-up
 // TODO Creer une modal pour search
+
+
+//! gcc interface.c -I. data_base.c -o  mysqltest -g `pkg-config --cflags --libs gtk+-3.0` -lsqlite3  
