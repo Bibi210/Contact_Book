@@ -99,6 +99,7 @@ extern GList* data_base_retrive(void){
         }
         Contacts = g_list_append(Contacts, Untype);
     }
+    sqlite3_finalize(commande);
     return Contacts;
 }
 

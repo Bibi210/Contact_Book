@@ -1,34 +1,6 @@
 #include "interface.h"
 
-t_contact_hash *cast_glist_to_contact(GList *contact)
-{
-    t_contact_hash *UnType = g_try_malloc0(sizeof(t_contact_hash));
-    assert(UnType);
-    UnType->Nom = g_strdup(g_list_nth_data(contact, 0));
-    UnType->Prenom = g_strdup(g_list_nth_data(contact, 1));
-    UnType->Mail = g_strdup(g_list_nth_data(contact, 2));
-    UnType->Adress = g_strdup(g_list_nth_data(contact, 3));
-    UnType->cp = g_strdup(g_list_nth_data(contact, 4));
-    UnType->type = g_strdup(g_list_nth_data(contact, 5));
-    UnType->number1 = g_strdup(g_list_nth_data(contact, 6));
-    UnType->number2 = g_strdup(g_list_nth_data(contact, 7));
-    UnType->number3 = g_strdup(g_list_nth_data(contact, 8));
-    return UnType;
-}
-void hide_widget(GtkWidget *widget, GtkWidget *widget_to_hide)
-{
-    gtk_widget_hide(widget_to_hide);
-};
-
-void updateLabel(GtkLabel *label)
-{
-    gchar *display;
-    display = g_strdup_printf("%d", nb_contact);   //convert num to str
-    gtk_label_set_text(GTK_LABEL(label), display); //set label to "display"
-    g_free(display);                               //free display
-}
-
-void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
+static void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
 {
     GtkCellRenderer *cellRenderer;
     GtkTreeViewColumn *column;
@@ -82,16 +54,7 @@ void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder
     data_base_clear();
 }
 
-gboolean is_str_void(gchar *to_test)
-{
-    if (g_strcmp0(to_test, "") == 0)
-    {
-        return TRUE;
-    }
-    return FALSE;
-}
-
-void add_to_list(GtkWidget *widget, gpointer user_data)
+static void add_to_list(GtkWidget *widget, gpointer user_data)
 {
 
     GtkListStore *store;
@@ -141,7 +104,7 @@ void add_to_list(GtkWidget *widget, gpointer user_data)
     updateLabel(GTK_LABEL(number_of_contact));
 }
 
-void ShowModal()
+static void ShowModal()
 {
     GtkBuilder *builder = NULL;
     GtkWidget *Add_user;
@@ -186,97 +149,8 @@ void ShowModal()
     gtk_dialog_run(GTK_DIALOG(Dialog_box));
 }
 
-gint compare_contact(t_contact_hash *contact_a, t_contact_hash *contact_b)
-{
-    gchar *A_full_name = g_strjoin("", contact_a->Nom, contact_a->Prenom, NULL);
-    gchar *B_full_name = g_strjoin("", contact_b->Nom, contact_b->Prenom, NULL);
-    return g_strcmp0(A_full_name, B_full_name);
-}
 
-void Search(GtkWidget *bar, gpointer search_bar)
-{
-    gchar *entry = g_strdup(gtk_entry_get_text(GTK_ENTRY(search_bar)));
-    GList *all_contact = g_hash_table_get_values(hashContact);
-    all_contact = g_list_sort(all_contact, (GCompareFunc)compare_contact);
-    GList *search_result = NULL;
-    guint entry_len = strlen(entry);
-    GtkTreeModel *model;
-    GtkTreeIter iter;
-    gchar *value;
-    gchar *value1;
-    gchar *value2;
-    t_contact_hash *UnType;
-    model = gtk_tree_view_get_model(GTK_TREE_VIEW(listView));
-    for (GList *encours = all_contact; encours != NULL; encours = encours->next)
-    {
-        UnType = encours->data;
-        if (g_ascii_strncasecmp(entry, UnType->Nom, entry_len) == 0 ||
-            g_ascii_strncasecmp(entry, UnType->Prenom, entry_len) == 0 ||
-            g_ascii_strncasecmp(entry, UnType->number1, entry_len) == 0 ||
-            g_ascii_strncasecmp(entry, UnType->number2, entry_len) == 0 ||
-            g_ascii_strncasecmp(entry, UnType->number3, entry_len) == 0)
-        {
-
-            search_result = g_list_append(search_result, UnType);
-        }
-    }
-
-    for (guint indice = 0; indice < nb_contact; indice++)
-    {
-        gtk_tree_model_get_iter_from_string(model, &iter, g_strdup_printf("%i", indice));
-        gtk_tree_selection_select_iter(selection, &iter);
-        gtk_tree_model_get(model, &iter, LAST_NAME_COLUMN, &value, -1);
-        gtk_tree_model_get(model, &iter, NAME_COLUMN, &value1, -1);
-        gtk_tree_model_get(model, &iter, NUMBER_COLUMN, &value2, -1);
-        gchar *key = g_strconcat(value1, value, value2, NULL);
-
-        for (GList *encours = search_result; encours != NULL; encours = encours->next)
-        {
-            UnType = encours->data;
-            gchar *result_key = g_strconcat(UnType->Prenom, UnType->Nom, UnType->number1, NULL);
-            if (g_strcmp0(result_key, key) == 0)
-            {
-                return;
-            }
-            g_free(result_key);
-        }
-        g_free(key);
-    }
-    gtk_tree_model_get_iter_first(model, &iter);
-    gtk_tree_selection_select_iter(selection, &iter);
-}
-
-void remove_item(GtkWidget *widget, gpointer selection)
-{
-    GtkListStore *listStore;
-    GtkTreeModel *model;
-    GtkTreeIter iter;
-    gchar *value;
-    gchar *value1;
-    gchar *value2;
-    listStore = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(listView)));
-    model = gtk_tree_view_get_model(GTK_TREE_VIEW(listView));
-
-    if (gtk_tree_model_get_iter_first(model, &iter) == FALSE)
-    {
-        return;
-    }
-
-    if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection),
-                                        &model, &iter))
-    {
-        gtk_tree_model_get(model, &iter, LAST_NAME_COLUMN, &value, -1);
-        gtk_tree_model_get(model, &iter, NAME_COLUMN, &value1, -1);
-        gtk_tree_model_get(model, &iter, NUMBER_COLUMN, &value2, -1);
-        gchar *key = g_strconcat(value, value1, value2, NULL);
-        g_hash_table_remove(hashContact, key);
-        gtk_list_store_remove(listStore, &iter);
-    }
-    nb_contact = g_hash_table_size(hashContact);
-    updateLabel(GTK_LABEL(number_of_contact));
-}
-
-void details_view(GtkWidget *widget, gpointer contact)
+static void details_view(GtkWidget *widget, gpointer contact)
 {
     GtkTreeIter iter;
     GtkTreeModel *model;
@@ -305,11 +179,44 @@ void details_view(GtkWidget *widget, gpointer contact)
         gtk_label_set_text(GTK_LABEL(data->number1), nouve->number1);
         gtk_label_set_text(GTK_LABEL(data->number2), nouve->number2);
         gtk_label_set_text(GTK_LABEL(data->number3), nouve->number3);
-        g_free(value);
     }
 }
 
-void Edit_mode()
+static void remove_item(GtkWidget *widget, gpointer selection)
+{
+    GtkListStore *listStore;
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+    gchar *value;
+    gchar *value1;
+    gchar *value2;
+    listStore = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(listView)));
+    model = gtk_tree_view_get_model(GTK_TREE_VIEW(listView));
+
+    if (gtk_tree_model_get_iter_first(model, &iter) == FALSE)
+    {
+        return;
+    }
+
+    if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection),
+                                        &model, &iter))
+    {
+        gtk_tree_model_get(model, &iter, LAST_NAME_COLUMN, &value, -1);
+        gtk_tree_model_get(model, &iter, NAME_COLUMN, &value1, -1);
+        gtk_tree_model_get(model, &iter, NUMBER_COLUMN, &value2, -1);
+        gchar *key = g_strconcat(value, value1, value2, NULL);
+        g_hash_table_remove(hashContact, key);
+        gtk_list_store_remove(listStore, &iter);
+        g_free(key);
+    }
+    nb_contact = g_hash_table_size(hashContact);
+    updateLabel(GTK_LABEL(number_of_contact));
+    g_free(value);
+    g_free(value1);
+    g_free(value2);
+}
+
+static void Edit_mode()
 {
     GtkBuilder *builder = NULL;
     t_contact_hash *nouve;
@@ -367,24 +274,66 @@ void Edit_mode()
     g_signal_connect(Edit_button, "clicked", G_CALLBACK(hide_widget), Edit_contact);
 
     gtk_dialog_run(GTK_DIALOG(Edit_contact));
+    g_free(value);
+    g_free(value1);
+    g_free(value2);
 }
 
-GList *cast_contact_to_glist(t_contact_hash *contact)
+static void Search(GtkWidget *bar, gpointer search_bar)
 {
-    GList *contact_list = NULL;
-    contact_list = g_list_append(contact_list, g_strdup(contact->Nom));
-    contact_list = g_list_append(contact_list, g_strdup(contact->Prenom));
-    contact_list = g_list_append(contact_list, g_strdup(contact->Mail));
-    contact_list = g_list_append(contact_list, g_strdup(contact->Adress));
-    contact_list = g_list_append(contact_list, g_strdup(contact->cp));
-    contact_list = g_list_append(contact_list, g_strdup(contact->type));
-    contact_list = g_list_append(contact_list, g_strdup(contact->number1));
-    contact_list = g_list_append(contact_list, g_strdup(contact->number2));
-    contact_list = g_list_append(contact_list, g_strdup(contact->number3));
-    return contact_list;
+    gchar *entry = g_strdup(gtk_entry_get_text(GTK_ENTRY(search_bar)));
+    GList *all_contact = g_hash_table_get_values(hashContact);
+    all_contact = g_list_sort(all_contact, (GCompareFunc)compare_contact);
+    GList *search_result = NULL;
+    guint entry_len = strlen(entry);
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+    gchar *value;
+    gchar *value1;
+    gchar *value2;
+    t_contact_hash *UnType;
+    model = gtk_tree_view_get_model(GTK_TREE_VIEW(listView));
+    for (GList *encours = all_contact; encours != NULL; encours = encours->next)
+    {
+        UnType = encours->data;
+        if (g_ascii_strncasecmp(entry, UnType->Nom, entry_len) == 0 ||
+            g_ascii_strncasecmp(entry, UnType->Prenom, entry_len) == 0 ||
+            g_ascii_strncasecmp(entry, UnType->number1, entry_len) == 0 ||
+            g_ascii_strncasecmp(entry, UnType->number2, entry_len) == 0 ||
+            g_ascii_strncasecmp(entry, UnType->number3, entry_len) == 0)
+        {
+
+            search_result = g_list_append(search_result, UnType);
+        }
+    }
+
+    for (guint indice = 0; indice < nb_contact; indice++)
+    {
+        gtk_tree_model_get_iter_from_string(model, &iter, g_strdup_printf("%i", indice));
+        gtk_tree_selection_select_iter(selection, &iter);
+        gtk_tree_model_get(model, &iter, LAST_NAME_COLUMN, &value, -1);
+        gtk_tree_model_get(model, &iter, NAME_COLUMN, &value1, -1);
+        gtk_tree_model_get(model, &iter, NUMBER_COLUMN, &value2, -1);
+        gchar *key = g_strconcat(value1, value, value2, NULL);
+
+        for (GList *encours = search_result; encours != NULL; encours = encours->next)
+        {
+            UnType = encours->data;
+            gchar *result_key = g_strconcat(UnType->Prenom, UnType->Nom, UnType->number1, NULL);
+            if (g_strcmp0(result_key, key) == 0)
+            {
+                return;
+            }
+            g_free(result_key);
+        }
+        g_free(key);
+    }
+    gtk_tree_model_get_iter_first(model, &iter);
+    gtk_tree_selection_select_iter(selection, &iter);
 }
 
-void contact_book_quit(GtkWidget *widget, gpointer data)
+
+static void contact_book_quit(GtkWidget *widget, gpointer data)
 {
     GList *all_contact = NULL;
     GList *UnType = NULL;
@@ -393,8 +342,17 @@ void contact_book_quit(GtkWidget *widget, gpointer data)
         UnType = cast_contact_to_glist((t_contact_hash *)all_contact->data);
         data_base_add_contact(UnType);
     }
+    g_hash_table_unref(hashContact);
     data_base_close();
     gtk_main_quit();
+}
+
+static void updateLabel(GtkLabel *label)
+{
+    gchar *display;
+    display = g_strdup_printf("%d", nb_contact);   //convert num to str
+    gtk_label_set_text(GTK_LABEL(label), display); //set label to "display"
+    g_free(display);                               //free display
 }
 
 gint main(gint argc, gchar **argv)
@@ -457,4 +415,4 @@ gint main(gint argc, gchar **argv)
     return 0;
 }
 
-//! gcc interface.c -I. data_base.c -o  mysqltest -g `pkg-config --cflags --libs gtk+-3.0` -lsqlite3
+//! gcc -Wall -Wextra interface.c -I. data_base.c utility_func.c  -o  mysqltest -g `pkg-config --cflags --libs gtk+-3.0` -lsqlite3
