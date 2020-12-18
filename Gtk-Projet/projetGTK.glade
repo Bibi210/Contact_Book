@@ -757,7 +757,7 @@
                       <object class="GtkLabel" id="user_first_name_right">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">ssssssssssssssssssssssssss</property>
+                        <property name="label" translatable="yes"></property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>

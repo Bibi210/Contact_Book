@@ -414,5 +414,3 @@ gint main(gint argc, gchar **argv)
     gtk_main();
     return 0;
 }
-
-//! gcc -Wall -Wextra interface.c -I. data_base.c utility_func.c  -o  mysqltest -g `pkg-config --cflags --libs gtk+-3.0` -lsqlite3
