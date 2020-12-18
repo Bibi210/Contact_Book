@@ -47,6 +47,23 @@ typedef struct Contact_struct
     GtkWidget *number3;
 } t_contact;
 
-
+/**to_move***/
+gboolean is_str_void(gchar *to_test);
 t_contact_hash *cast_glist_to_contact(GList *contact);
+GList *cast_contact_to_glist(t_contact_hash *contact);
+gint compare_contact(t_contact_hash *contact_a, t_contact_hash *contact_b);
+void hide_widget(GtkWidget *widget, GtkWidget *widget_to_hide);
+void updateLabel(GtkLabel *label);
+/**to_move**/
+
+
+
+void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder);
+void add_to_list(GtkWidget *widget, gpointer user_data);
+void ShowModal();
+void Search(GtkWidget *bar, gpointer search_bar);
+void remove_item(GtkWidget *widget, gpointer selection);
+void details_view(GtkWidget *widget, gpointer contact);
+void Edit_mode();
+void contact_book_quit(GtkWidget *widget, gpointer data);
 
