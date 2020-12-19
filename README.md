@@ -1,5 +1,5 @@
 # Paisley Park 
-Contact book in GTK with glade
+Contact book en GTK  avec une interface Glade
 
 Ceci est un contact book ecrit dans le cadre du projet final du cours d'interface de l'université Paris 8
 
