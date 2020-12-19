@@ -13,7 +13,6 @@ extern void data_base_init()
 
     if (sqlite3_exec(_db, "SELECT * FROM contact_list;", 0, 0, &errorsql) != SQLITE_OK)
     {
-        g_print("Creation de la table \n");
         sqlite3_exec(_db, "CREATE TABLE contact_list (nom TEXT,prenom TEXT,email TEXT,adresse TEXT,CP TEXT,type TEXT,num1 TEXT,num2 TEXT,num3 TEXT);", 0, 0, &errorsql);
     }
     sqlite3_exec(_db, ".backup main  contacts_base.db;", 0, 0, &errorsql);

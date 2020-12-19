@@ -1,3 +1,8 @@
+//! { DIBASSI Brahima} 19005521 \\\\  
+//! { KANOUTE Daouda} 19000407}  \\
+//! \date {Dimanche 20 Décembre 2020} 
+
+
 #include "interface.h"
 
 static void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
@@ -182,7 +187,7 @@ static void details_view(GtkWidget *widget, gpointer contact)
     }
 }
 
-static void remove_item(GtkWidget *widget, gpointer selection)
+static void remove_item(GtkWidget *widget)
 {
     GtkListStore *listStore;
     GtkTreeModel *model;
@@ -279,7 +284,7 @@ static void Edit_mode()
     g_free(value2);
 }
 
-static void Search(GtkWidget *bar, gpointer search_bar)
+static void Search(GtkWidget *widget, gpointer search_bar)
 {
     gchar *entry = g_strdup(gtk_entry_get_text(GTK_ENTRY(search_bar)));
     GList *all_contact = g_hash_table_get_values(hashContact);
@@ -333,7 +338,7 @@ static void Search(GtkWidget *bar, gpointer search_bar)
 }
 
 
-static void contact_book_quit(GtkWidget *widget, gpointer data)
+static void contact_book_quit(GtkWidget *widget)
 {
     GList *all_contact = NULL;
     GList *UnType = NULL;
