@@ -1,7 +1,6 @@
 //! { DIBASSI Brahima} 19005521 \\\\  
 //! { KANOUTE Daouda} 19000407}  \\
-//! \date {Dimanche 20 Décembre 2020} 
-
+//! \date {Dimanche 20 Décembre 2020}
 
 #include "interface.h"
 
@@ -154,7 +153,6 @@ static void ShowModal()
     gtk_dialog_run(GTK_DIALOG(Dialog_box));
 }
 
-
 static void details_view(GtkWidget *widget, gpointer contact)
 {
     GtkTreeIter iter;
@@ -213,12 +211,12 @@ static void remove_item(GtkWidget *widget)
         g_hash_table_remove(hashContact, key);
         gtk_list_store_remove(listStore, &iter);
         g_free(key);
+        nb_contact = g_hash_table_size(hashContact);
+        updateLabel(GTK_LABEL(number_of_contact));
+        g_free(value);
+        g_free(value1);
+        g_free(value2);
     }
-    nb_contact = g_hash_table_size(hashContact);
-    updateLabel(GTK_LABEL(number_of_contact));
-    g_free(value);
-    g_free(value1);
-    g_free(value2);
 }
 
 static void Edit_mode()
@@ -335,7 +333,6 @@ static void Search(GtkWidget *widget, gpointer search_bar)
     gtk_tree_model_get_iter_first(model, &iter);
     gtk_tree_selection_select_iter(selection, &iter);
 }
-
 
 static void contact_book_quit(GtkWidget *widget)
 {
