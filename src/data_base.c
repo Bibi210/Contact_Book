@@ -1,6 +1,8 @@
 #include "../header/data_base.h"
-static sqlite3 *_db;
 
+//! { DIBASSI Brahima} 19005521 \\\\  
+//! { KANOUTE Daouda} 19000407}  \\
+//! \date {Dimanche 20 Décembre 2020}
 
 extern void data_base_init()
 {
@@ -85,14 +87,17 @@ extern GList *data_base_lookup(gchar *recherche)
     return Contacts;
 }
 
-extern GList* data_base_retrive(void){
+extern GList *data_base_retrive(void)
+{
     sqlite3_stmt *commande;
-    GList* Untype = NULL;
-    GList* Contacts = NULL;
-    sqlite3_prepare_v2(_db, "SELECT * FROM contact_list ORDER BY nom",-1,&commande, NULL);
-    while(sqlite3_step(commande) == SQLITE_ROW){
+    GList *Untype = NULL;
+    GList *Contacts = NULL;
+    sqlite3_prepare_v2(_db, "SELECT * FROM contact_list ORDER BY nom", -1, &commande, NULL);
+    while (sqlite3_step(commande) == SQLITE_ROW)
+    {
         Untype = NULL;
-        for(gint i = 0; i < CONTACT_SIZE;i++){
+        for (gint i = 0; i < CONTACT_SIZE; i++)
+        {
             gchar *bref = g_strdup((gchar *)sqlite3_column_text(commande, i));
             Untype = g_list_append(Untype, bref);
         }
@@ -102,7 +107,8 @@ extern GList* data_base_retrive(void){
     return Contacts;
 }
 
-extern void data_base_clear(void){
+extern void data_base_clear(void)
+{
     sqlite3_exec(_db, "DELETE FROM contact_list;", 0, 0, NULL);
 }
 

@@ -1,5 +1,10 @@
 #include <gtk/gtk.h>
 #include <assert.h>
+
+//! { DIBASSI Brahima} 19005521 \\\\  
+//! { KANOUTE Daouda} 19000407}  \\
+//! \date {Dimanche 20 Décembre 2020}
+
 typedef struct Contact_hash_struct
 {
     gchar *Nom;
@@ -13,7 +18,6 @@ typedef struct Contact_hash_struct
     gchar *number3;
     gint type_id;
 } t_contact_hash;
-
 
 extern gboolean is_str_void(gchar *to_test);
 extern t_contact_hash *cast_glist_to_contact(GList *contact);

@@ -1,8 +1,8 @@
+#include "../header/interface.h"
+
 //! { DIBASSI Brahima} 19005521 \\\\  
 //! { KANOUTE Daouda} 19000407}  \\
 //! \date {Dimanche 20 Décembre 2020}
-
-#include "../header/interface.h"
 
 static void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
 {
@@ -283,6 +283,10 @@ static void Edit_mode()
 
 static void Search(GtkWidget *search_bar)
 {
+    if (nb_contact == 0) {
+        return;
+    }
+
     gchar *entry = g_strdup(gtk_entry_get_text(GTK_ENTRY(search_bar)));
     GList *all_contact = g_hash_table_get_values(hashContact);
     all_contact = g_list_sort(all_contact, (GCompareFunc)compare_contact);

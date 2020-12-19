@@ -4,6 +4,10 @@
 #include "data_base.h"
 #include "utility_func.h"
 
+//! { DIBASSI Brahima} 19005521 \\\\  
+//! { KANOUTE Daouda} 19000407}  \\
+//! \date {Dimanche 20 Décembre 2020}
+
 static GtkWidget *listView;
 static GHashTable *hashContact;
 static GtkTreeSelection *selection;

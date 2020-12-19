@@ -1,10 +1,13 @@
 #include "../header/utility_func.h"
 
+//! { DIBASSI Brahima} 19005521 \\\\  
+//! { KANOUTE Daouda} 19000407}  \\
+//! \date {Dimanche 20 Décembre 2020}
+
 extern void hide_widget(GtkWidget *widget, GtkWidget *widget_to_hide)
 {
     gtk_widget_hide(widget_to_hide);
 };
-
 
 extern gboolean is_str_void(gchar *to_test)
 {
