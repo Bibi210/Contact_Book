@@ -2,7 +2,7 @@
 //! { KANOUTE Daouda} 19000407}  \\
 //! \date {Dimanche 20 Décembre 2020}
 
-#include "interface.h"
+#include "../header/interface.h"
 
 static void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder)
 {
@@ -80,7 +80,7 @@ static void add_to_list(GtkWidget *widget, gpointer user_data)
         (is_str_void(number1) && is_str_void(number2) && is_str_void(number3)))
     {
         g_print("Contact non valide certains des champs obligatoires sont vides\n");
-        GtkBuilder *builder = gtk_builder_new_from_file("./projetGTK.glade");
+        GtkBuilder *builder = gtk_builder_new_from_file("projetGTK.glade");
         GtkWidget *Add_error = GTK_WIDGET(gtk_builder_get_object(builder, "Add_error"));
         gtk_dialog_run(GTK_DIALOG(Add_error));
         return;
@@ -281,7 +281,7 @@ static void Edit_mode()
     gtk_dialog_run(GTK_DIALOG(Edit_contact));
 }
 
-static void Search(GtkWidget *widget, gpointer search_bar)
+static void Search(GtkWidget *search_bar)
 {
     gchar *entry = g_strdup(gtk_entry_get_text(GTK_ENTRY(search_bar)));
     GList *all_contact = g_hash_table_get_values(hashContact);
@@ -409,7 +409,7 @@ gint main(gint argc, gchar **argv)
     g_signal_connect(contact_remove, "clicked", G_CALLBACK(remove_item), selection);
     g_signal_connect(selection, "changed", G_CALLBACK(details_view), contact);
     g_signal_connect(Edit_contact_btn, "clicked", G_CALLBACK(Edit_mode), NULL);
-    g_signal_connect(search_bar, "changed", G_CALLBACK(Search), search_bar);
+    g_signal_connect(search_bar, "changed", G_CALLBACK(Search), NULL);
 
     gtk_widget_show_all(window);
     gtk_main();

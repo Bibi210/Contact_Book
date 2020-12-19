@@ -33,14 +33,12 @@ typedef struct Contact_struct
     GtkWidget *number3;
 } t_contact;
 
-
 static void updateLabel(GtkLabel *label);
 static void initList(GtkWidget *listViewe, GtkListStore *listStore, GtkBuilder *builder);
 static void add_to_list(GtkWidget *widget, gpointer user_data);
 static void ShowModal();
-static void Search(GtkWidget *bar, gpointer search_bar);
+static void Search(GtkWidget *search_bar);
 static void remove_item(GtkWidget *widget);
 static void details_view(GtkWidget *widget, gpointer contact);
 static void Edit_mode();
 static void contact_book_quit(GtkWidget *widget);
-

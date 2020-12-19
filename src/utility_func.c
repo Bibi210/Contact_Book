@@ -1,4 +1,4 @@
-#include "utility_func.h"
+#include "../header/utility_func.h"
 
 extern void hide_widget(GtkWidget *widget, GtkWidget *widget_to_hide)
 {
