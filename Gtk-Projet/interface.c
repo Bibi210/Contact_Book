@@ -226,9 +226,6 @@ static void Edit_mode()
     GtkBuilder *builder = NULL;
     t_contact_hash *nouve;
     GtkTreeIter iter;
-    gchar *value;
-    gchar *value1;
-    gchar *value2;
     GtkTreeModel *model;
     t_contact *data = g_try_malloc(sizeof(t_contact));
     builder = gtk_builder_new_from_file("./projetGTK.glade");
@@ -246,7 +243,9 @@ static void Edit_mode()
     if (gtk_tree_selection_get_selected(
             GTK_TREE_SELECTION(selection), &model, &iter))
     {
-
+        gchar *value;
+        gchar *value1;
+        gchar *value2;
         gtk_tree_model_get(model, &iter, LAST_NAME_COLUMN, &value, -1);
         gtk_tree_model_get(model, &iter, NAME_COLUMN, &value1, -1);
         gtk_tree_model_get(model, &iter, NUMBER_COLUMN, &value2, -1);
@@ -261,6 +260,9 @@ static void Edit_mode()
         gtk_entry_set_text(GTK_ENTRY(numero1_edit), nouve->number1);
         gtk_entry_set_text(GTK_ENTRY(numero2_edit), nouve->number2);
         gtk_entry_set_text(GTK_ENTRY(numero3_edit), nouve->number3);
+        g_free(value);
+        g_free(value1);
+        g_free(value2);
     }
 
     data->Prenom = Name_edit;
@@ -279,9 +281,6 @@ static void Edit_mode()
     g_signal_connect(Edit_button, "clicked", G_CALLBACK(hide_widget), Edit_contact);
 
     gtk_dialog_run(GTK_DIALOG(Edit_contact));
-    g_free(value);
-    g_free(value1);
-    g_free(value2);
 }
 
 static void Search(GtkWidget *widget, gpointer search_bar)
